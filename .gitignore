@@ -1,0 +1,4 @@
+# tpm installs plugins into ~/.config/tmux/plugins. With .stowrc's --no-folding
+# that is a real directory, but stow run without .stowrc folds the directory
+# into the repo, and tpm would then write third-party code here.
+plugins/
