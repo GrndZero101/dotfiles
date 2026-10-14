@@ -995,6 +995,20 @@ works.
   `<details>` only render there. Check that every alert still reads
   correctly in plain-text `cat README.md` too.
 
+**Built 2026-10-14; every check above passed:**
+- Both combinations via `install.sh` from `file:///dotfiles` on 24.04
+  (tmux 3.4, zsh 5.9, Stow 2.4.1) and 22.04 (tmux 3.2a, zsh 5.8.1,
+  **Stow 2.3.1**, which also expands `~` in `.stowrc`), online and with
+  `--network none`. The in-place zsh switch and the installer re-run work.
+- The real one-liner on bare `ubuntu:24.04` cloned `fbd2da5` from GitHub
+  and ended with working zsh (plugins on first start, silent second start)
+  and tmux. Without git it prints the hint and exits 1.
+- README finished. GitHub's `/markdown` API (GFM) renders all 5 alerts,
+  both `<details>` blocks, every `<kbd>` and the mermaid block. The mermaid
+  **diagram** itself can only be checked on the real page.
+- The packages table no longer says `tmux-full` ships a sesh config.
+  Phase 7 adds that back with the config.
+
 ### Phase 7: sesh starter config (inside `tmux-full`)
 - Small `tmux-full/.config/sesh/sesh.toml`:
   - a `tmux config` session (alias `tc`, opens `nvim tmux.conf`), pointing at
