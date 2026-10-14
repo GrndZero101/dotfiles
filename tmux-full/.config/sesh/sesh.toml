@@ -1,0 +1,29 @@
+# sesh: the sessions behind tmux-full's prefix + T picker.
+# Ships inside tmux-full because it only serves that picker (CLAUDE.md,
+# convention 8). Patterns from the sesh author's config:
+# https://github.com/joshmedeski/dotfiles/tree/main/.config/sesh
+#
+# Paths assume the repo is at ~/.config/dotfiles, the installer's default.
+# A clone elsewhere needs a symlink there.
+
+# Hide throwaway sessions from the picker
+blacklist = ["^scratch$"]
+
+# Aliases are fixed short names: `sesh connect tc` from a shell, or type
+# them in `sesh picker`, which connects as soon as the alias is complete.
+# In the fzf popup they're just fuzzy matches
+[[session]]
+name = "tmux config"
+path = "~/.config/dotfiles/tmux-full/.config/tmux"
+alias = "tc"
+alias_auto_connect = true
+startup_command = "nvim tmux.conf"
+
+[[session]]
+name = "dotfiles"
+path = "~/.config/dotfiles"
+alias = "df"
+
+# Preview for anything without its own: the directory, then its git status
+[default_session]
+preview_command = "eza --all --git --icons --color=always {} && git -C {} status --short 2>/dev/null"
