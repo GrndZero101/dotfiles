@@ -664,9 +664,9 @@ miss the point.
 | Vi copy mode | `mode-keys vi`; `v` begin-selection, `y` copy-selection-and-cancel | tmux-yank |
 | System clipboard | `set -g set-clipboard on` (OSC 52, works **over SSH**) | tmux-yank |
 | Sensible defaults | `escape-time 10`, `history-limit 50000`, `focus-events on`, `display-time 4000` | tmux-sensible |
-| Reload | `bind r source-file ~/.config/tmux/tmux.conf \; display "reloaded"` | sensible's `R` |
+| Reload | `bind r source-file -F "#{config_files}" \; display "reloaded"`. Reloads whichever file was loaded, so the `tmux -L minimal -f <repo file>` trial doesn't reload tmux-full's `~/.config/tmux/tmux.conf`. Verified on 3.2a, 3.4 and 3.8 | sensible's `R` |
 | True colour | `terminal-features` RGB line (same as full) | — |
-| Status line | Built-in only: session name on the left, `%H:%M` on the right, **named colours** (no hex, so it looks right without RGB) | catppuccin, cpu, weather |
+| Status line | Built-in only: session name on the left, host name and `%H:%M` on the right, **named colours** (no hex, so it looks right without RGB). The host name shows which box an SSH'd or nested tmux is on | catppuccin, cpu, weather |
 
 **Deliberately left out:**
 - **Vim-aware `C-h/j/k/l`.** That needs a `ps` call on every keypress, and

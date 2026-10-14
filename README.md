@@ -5,7 +5,7 @@ GNU Stow dotfiles for tmux, sesh and basic zsh, on Linux and macOS.
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 > [!IMPORTANT]
-> Under construction. Only `tmux-full` is in the repo so far, and there's
+> Under construction. Only the tmux packages are in the repo so far, and there's
 > no installer yet; [`PLAN.md`](PLAN.md) tracks the build.
 
 ## Quick start
