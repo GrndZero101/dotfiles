@@ -382,8 +382,11 @@ Steps:
 8. **For `tmux-full` only,** bootstrap tpm: clone
    `https://github.com/tmux-plugins/tpm` to `~/.config/tmux/plugins/tpm` if
    it isn't there, then run `~/.config/tmux/plugins/tpm/bin/install_plugins`.
-   See the known issue under Phase 2. The build session must verify how
-   `install_plugins` behaves when no tmux server is running.
+   This must happen **before tmux first starts** (see the known issue under
+   Phase 2). Verified 2026-10-14: with no server running, `install_plugins`
+   starts a temporary server to read the plugin path, installs everything
+   (about 6s), exits 0, and leaves no server behind. If a clone fails it
+   prints "download fail"; check its exit status and stop loudly.
 9. **Print the next steps.** If a `zsh-*` package was stowed and zsh isn't
    the login shell, print `chsh -s "$(command -v zsh)"`, but don't run it.
 
@@ -393,7 +396,11 @@ tmux loading the whole config, and nothing caught it.
 
 1. **tmux:** for each `*/.config/tmux/tmux.conf`, parse it on a throwaway
    server: `tmux -L check-$$ -f /dev/null new -d`, then
-   `source-file -n <file>`, then kill that server.
+   `tmux -L check-$$ source-file -n <file>`, then kill that server.
+   **These must be three separate `tmux` invocations.** Chained with `\;`
+   into one, tmux prints the parse error but exits 0, because the exit
+   status comes from the trailing `kill-server` (verified on tmux 3.8). Run
+   on its own, `source-file -n` exits 1 on an error.
 2. **zsh:** `zsh -n` on each `zsh-*/.zshrc`. This only checks syntax and runs
    nothing, so it's safe on a shell-config host. The real startup tests run
    only inside the Phase 6 container.
@@ -781,11 +788,28 @@ Each phase finishes with its acceptance check passing. Commit after each one.
 - Record in the migration commit message where the files came from:
   `~/.config/tmux` @ `778c78c`. History stays in the archived old repo.
   Don't bring in `git subtree`/`filter-repo` for four commits.
-- **Known issue to resolve:** the early
-  `run '~/.config/tmux/plugins/tmux/catppuccin.tmux'` fails on a fresh
-  machine where plugins aren't installed yet. Either make bootstrap install
-  plugins before tmux first starts (preferred, no config change), or guard
-  the line with `if-shell 'test -f …'`. Pick one and document why.
+- **Known issue, resolved:** on a fresh machine with no plugins, tmux
+  starts but reports **four** errors, not one: both `run` lines (catppuccin
+  and tpm) return 127, and both post-tpm `message-style` overrides are
+  invalid because `@thm_*` is empty. **Decision: bootstrap installs plugins
+  before tmux first starts (step 8); the config is unchanged.** Why:
+  - Guarding would take three `if-shell` blocks, not one, and still leave a
+    degraded config with no theme or widgets. Installing is the real fix.
+  - `install_plugins` works with no server running (verified), so
+    bootstrap can do it before tmux is ever launched.
+  - Running plain `stow tmux-full` on a fresh box without bootstrap still
+    shows the errors. That's doctrine rule 6 (fail loudly): they point
+    straight at the missing plugins. The README must say to use bootstrap,
+    or `prefix + I`, on a fresh machine.
+- **Testing with a fake `HOME` needs tmux isolation.** The tmux socket
+  depends on the uid and `$TMUX`, not on `$HOME`, and a shell inside tmux
+  inherits `TMUX_PLUGIN_MANAGER_PATH`, which tpm trusts over its own
+  detection. Without isolation, tpm reads the **real** plugin directory and
+  reports everything as "Already installed". Isolate with
+  `env -u TMUX -u TMUX_PANE -u TMUX_PLUGIN_MANAGER_PATH TMUX_TMPDIR=<short dir>`.
+  Keep `TMUX_TMPDIR` short: socket paths over about 108 bytes fail with
+  "File name too long". This affects tests only. On a real machine the
+  inherited value is the correct one.
 - ✅ The parse check (written by hand for now, folded into `check.sh` in
   Phase 5) passes.
 
@@ -839,8 +863,10 @@ Each phase finishes with its acceptance check passing. Commit after each one.
 - ✅ `install.sh` refuses an existing `DOTFILES_DIR` that isn't a clone of
   this repo. Test it with a throwaway directory.
 - ✅ `HOME=$(mktemp -d) ./bootstrap.sh` (no arguments) stows `tmux-full`, the
-  default, on the host. That only creates symlinks in a temporary
-  directory; nothing runs.
+  default, on the host, and installs its plugins into the temporary `HOME`.
+  It must run with the tmux isolation from Phase 2 (`env -u TMUX -u
+  TMUX_PANE -u TMUX_PLUGIN_MANAGER_PATH TMUX_TMPDIR=<short dir>`), or it
+  talks to the live tmux server.
 - ✅ Changing `DEFAULT_PACKAGES` to `tmux-minimal` and re-running the same
   command stows `tmux-minimal` instead. Then change it back.
 - ✅ `./bootstrap.sh tmux-full tmux-minimal` is refused with a clear message.
