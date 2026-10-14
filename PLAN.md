@@ -360,7 +360,9 @@ Steps:
    - Each package needs its tool: `tmux-*` needs `tmux`, and `zsh-*` needs
      `zsh`.
    - `tmux-full` needs Homebrew for the rest (`brew bundle --file
-     Brewfile`).
+     Brewfile`). **As built, these only warn**, with the `brew bundle`
+     command, and don't exit: they're optional (convention 7), and tmux
+     runs without them.
    - If anything is missing, **print** the install command for the OS
      (`brew install …`, `sudo apt install …`) and exit. Don't run `sudo` on
      the user's behalf.
@@ -408,7 +410,11 @@ tmux loading the whole config, and nothing caught it.
    Otherwise warn and skip it, rather than failing.
 4. **Stow:** `stow -n` for every package, which reports conflicts without
    changing anything. Run variants of the same tool **separately**, because
-   they conflict with each other by design.
+   they conflict with each other by design. **As built, the target is an
+   empty temporary directory** (`-t` overrides `.stowrc`), so the check
+   validates the repo, not this machine. Against `$HOME` it would fail on
+   this workstation until Phase 8 (the real `~/.config/tmux`, the stale
+   `~/.zshrc`), and conflicts on a real machine are bootstrap's job.
 5. **Environment:** warn (don't fail) if `XDG_CONFIG_HOME` is set to
    anything other than `~/.config`.
 
@@ -895,7 +901,9 @@ rather than 25, because the guards above are written out plainly).
 - `check.sh` first (Phases 2–4 already rely on its logic), then
   `bootstrap.sh`, then `install.sh`, then `Brewfile`. The Brewfile covers
   `tmux-full` and its sesh picker: tmux, stow, git, fzf, fd, zoxide, sesh,
-  gitmux, bat, eza.
+  gitmux, eza. (**`bat` was dropped:** nothing in the repo uses it. The
+  picker calls sesh, fzf, fd and zoxide; gitmux feeds the status line; eza
+  is for Phase 7's preview.)
 - ✅ `shellcheck` is clean on all three scripts. Check `install.sh` with
   `--shell=sh`, because it must not contain bashisms.
 - ✅ `install.sh` refuses an existing `DOTFILES_DIR` that isn't a clone of
@@ -909,6 +917,19 @@ rather than 25, because the guards above are written out plainly).
   command stows `tmux-minimal` instead. Then change it back.
 - ✅ `./bootstrap.sh tmux-full tmux-minimal` is refused with a clear message.
 - The `zsh-*` packages are bootstrapped in Phase 6.
+
+**Built 2026-10-14; every check above passed.** Also verified:
+- `check.sh` fails (exit 1, with the reason) on a tmux parse error, a zsh
+  syntax error and an unstowable package.
+- bootstrap backs up a real file in the way, refuses `zsh-*` when
+  `~/.zshenv` exists, exits 1 when a variant is already stowed or a tpm
+  plugin download fails, and a re-run is a no-op.
+- `install.sh` runs nothing from a truncated download (cut at 4 points),
+  and without git it prints the hint and exits 1.
+
+shellcheck wasn't on this host, so it ran from `koalaman/shellcheck:stable`
+(0.11.0) through a shim on `PATH`, which also exercised `check.sh`'s
+shellcheck branch. Sizes: install.sh 58 lines, bootstrap.sh 96, check.sh 74.
 
 ### Phase 6: the vanilla-box test (the doctrine's real exam)
 Prove the container combinations work on a stock OS.
