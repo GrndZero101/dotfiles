@@ -49,7 +49,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 
 | Package | What it is | Requires | Safe on shell-config machines |
 |---|---|---|---|
-| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker, vim-aware pane navigation, cpu/weather/git status | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
+| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, cpu/weather/git status | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`zsh-minimal`](zsh-minimal) | `~/.zshrc` for fresh boxes: history, completion menu, vi mode. No plugins, no downloads | zsh | ❌ fresh boxes and containers only |
 | [`zsh-antidote`](zsh-antidote) | `zsh-minimal` plus zsh-vi-mode and fzf, installed by antidote on first start; works offline | zsh, git; curl or wget for fzf | ❌ fresh boxes and containers only |
@@ -89,6 +89,12 @@ Day to day it's plain `stow`, run from the repo root (it reads `.stowrc`):
 > ```sh
 > tmux -L minimal -f "$PWD/tmux-minimal/.config/tmux/tmux.conf" new
 > ```
+
+`tmux-full`'s sesh config adds two sessions with fixed aliases: `tc` opens
+`tmux.conf` in nvim, and `df` opens the repo. Use `sesh connect tc` from a
+shell, or find them in the <kbd>C-Space</kbd> <kbd>T</kbd> picker. They
+expect the repo at `~/.config/dotfiles`, the installer's default; if you
+cloned elsewhere, symlink it there.
 
 Both tmux configs use the prefix <kbd>C-Space</kbd>. In nested tmux (say
 `tmux-full` locally, `tmux-minimal` over SSH), press it twice to reach the

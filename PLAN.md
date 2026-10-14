@@ -1026,7 +1026,35 @@ works.
   active shell-config profile, not here (convention 6). Check that it's
   there; otherwise sesh's directory list never grows.
 - ✅ The `prefix + T` picker shows the configured sessions; typing `tc`
-  auto-connects.
+  auto-connects. **Reworded when built, see below:** the configured
+  sessions show in the picker, and `sesh connect tc` opens `tmux.conf` in
+  nvim.
+
+**Built 2026-10-14.** Decisions made with the user:
+- **Session paths use `~/.config/dotfiles`**, the installer's default, so
+  they work on every installed machine. This workstation's clone lives
+  elsewhere, so Phase 8 adds a symlink. sesh expands `$VARS` and `~` in
+  paths but has no `${VAR:-default}`, so there's no portable alternative.
+- **`prefix + T` stays the fzf picker.** Alias auto-connect exists only in
+  sesh's own TUI (`sesh picker`); the fzf popup reads `sesh list`, which
+  prints names without aliases. The aliases (`tc` auto-connects, `df`)
+  still work from the shell and in `sesh picker`.
+
+Departures from the brief:
+- **No `[[wildcard]]` git icon.** sesh applies custom icons only in its own
+  TUI and `sesh list --json`; `sesh list --icons`, which the fzf picker
+  reads, always shows the source glyph. With the fzf picker it did
+  nothing, so it was removed (doctrine rule 5).
+- **No `bind L run-shell "sesh last"`.** It was optional, and tmux's default
+  `L` already switches to the last session.
+
+Verified with a throwaway `HOME` and an isolated tmux server: the config
+parses; `sesh connect tc` creates a "tmux config" session running nvim in
+`tmux-full/.config/tmux`; the default preview runs through a shell (eza,
+then `git status --short`); `^scratch$` hides `scratch` but not
+`scratchpad`. The workstation's zoxide hook is in shell-config's
+`zsh-tll-citadel-dev-fortress/config/60-tools.zsh`, and zoxide knows 74
+directories.
 
 ### Phase 8: cut over on this machine
 1. Detach or close tmux sessions you care about, or accept that the running
@@ -1037,6 +1065,9 @@ works.
    repo with its git history and its `plugins/`.
 3. `./bootstrap.sh` (the default, `tmux-full`, including sesh config). No `zsh-*`, so shell-config keeps the
    shell.
+3a. `ln -s ~/projects/github/GrndZero101/dotfiles ~/.config/dotfiles`, so
+   the sesh sessions (`tc`, `df`) and the installer's default
+   `DOTFILES_DIR` both find this clone (decided in Phase 7).
 4. Optionally copy `plugins/` across from the archive instead of
    re-downloading.
 5. Restart the tmux server (`tmux kill-server`, then start tmux again) to
