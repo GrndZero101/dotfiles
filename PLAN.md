@@ -681,6 +681,10 @@ miss the point.
 Clipboard caveat for the build session: `set-clipboard on` relies on the
 terminal accepting OSC 52. Windows Terminal, iTerm2, Ghostty, WezTerm and
 kitty do. Verify it on WSL and macOS, and write the result in the README.
+**WSL: verified 2026-10-14** (copy in tmux-minimal, paste into a Windows
+app). It only works from a tmux that isn't nested inside tmux-full, whose
+default `set-clipboard external` drops OSC 52 from programs inside it,
+including an inner tmux. macOS is still to check (Phase 9).
 
 ---
 
