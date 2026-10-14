@@ -1,0 +1,2 @@
+jeffreytse/zsh-vi-mode
+junegunn/fzf kind:path path:bin
