@@ -570,7 +570,7 @@ and tool hooks.
 |---|---|---|
 | No `git` | Skip the bootstrap silently. Behave like `zsh-minimal` | vanilla box (doctrine rule 7) |
 | No network (DNS fails) | The clone fails fast. Write the marker and print one warning. Behave like `zsh-minimal` | offline container |
-| Network "hangs" (packets dropped, captive portal) | Wrap the clone in `timeout 10` **if** `timeout` exists (it does on Linux; on macOS it's `gtimeout`, if anything). The marker stops this happening on every new shell | prevents a 2-minute stall in every new tmux pane |
+| Network "hangs" (packets dropped, captive portal) | Wrap all downloads in one `timeout 30` (built as 30, not 10: it covers three clones, not one) **if** `timeout` exists (it does on Linux; on macOS it's `gtimeout`, if anything). The marker stops this happening on every new shell | prevents a 2-minute stall in every new tmux pane |
 | Recent failure marker (for example, less than 60 minutes old) | Don't try again. Behave like `zsh-minimal` | a zsh glob qualifier on the marker's age, like `(Nmm-60)`, does this in one line. **The marker earns its place**: without it, an offline box re-attempts the download in every new shell |
 | Everything installed | Never touches the network | idempotent. Updates only happen through an explicit `antidote update` |
 | `GIT_TERMINAL_PROMPT=0` during the clone | A bad URL can't pop up a credential prompt in the middle of shell startup | — |
@@ -594,9 +594,9 @@ does OSC 52, so there's no need for a second mechanism yet.
     status, so old fzf just means "no fzf bindings". Don't parse version
     numbers.
 
-Each hook is a single `(( $+commands[tool] )) && …` line. On a vanilla box
-none of these tools are installed, so none of the hooks run. Doctrine rule
-7 holds.
+Each hook is a single `if (( $+commands[tool] )); then …; fi` line. On a
+vanilla box none of these tools are installed, so none of the hooks run.
+Doctrine rule 7 holds.
 
 ### Vanilla-box caveats (put these in the README)
 - **The Ubuntu Docker image has no zsh.** `apt install zsh`, as bootstrap's
@@ -856,6 +856,40 @@ Each phase finishes with its acceptance check passing. Commit after each one.
   | No curl, no wget | image built without curl (build arg) | zsh-vi-mode still installs (it only needs git); fzf binary skipped **silently**; no fzf bindings; exit 0 |
   | No curl, old apt fzf | as above, plus `apt install fzf` | no "unknown option" noise; just no fzf bindings |
   | Update | `antidote update`, then the fzf `install --bin` one-liner | plugins and the fzf binary move to the latest versions |
+
+**Built 2026-10-14. Every row above passed**, plus `zsh-minimal` with
+apt's fzf 0.44 (24.04) and 0.29 (22.04, zsh 5.8.1), and `zsh-antidote` on
+22.04. Versions: antidote 2.3.0, fzf 0.74.5. The scenarios ran with
+`test/Dockerfile` (created early) and image variants built with `PKGS`.
+
+Where the build departs from this brief, and why:
+1. **`antidote bundle` in a subshell, not `antidote load`.** This is the
+   static-file pattern from antidote's own README. Run as a subshell, the
+   whole download (antidote plus both plugin clones) sits under one
+   `timeout`. `antidote load` is a shell function, so it can't be wrapped.
+   The bundle goes to `plugins.zsh.tmp` and is moved into place only on
+   success (`antidote bundle` exits 1 if any clone fails). A failed run
+   can't leave a stale load file, so **plugin-block step 4 (check the
+   plugin loaded, delete the load file) isn't needed.** `antidote` is
+   autoloaded from its `functions/` directory, so `antidote update` still
+   works.
+2. **`timeout 30`, not 10**, because it covers three clones. A black-holed
+   GitHub costs the first shell about 30s; the marker then skips retries
+   for an hour.
+3. **The fzf hook also needs a terminal (`[[ -t 0 ]]`), in both
+   packages.** fzf's `--zsh` script saves and restores every option,
+   including `zle`, which prints "can't change option: zle" twice in an
+   interactive shell without a tty (`zsh -i -c exit`,
+   `docker exec box zsh -ic …`). Key bindings are useless there anyway.
+4. **Hooks use `if …; fi`, not `&&`.** With `&&`, a missing tool on the
+   last line makes `.zshrc` return 1, and `zsh -i -c exit` exits 1.
+
+Also: **brew's `fpath` line was dropped.** Homebrew 7's `shellenv zsh`
+already adds `site-functions`; it only has to run before `compinit`. And
+`.zshrc` has to look for brew at its standard paths, because unlike under
+shell-config, nothing has put brew on `PATH` yet. Sizes: `zsh-minimal`
+67 lines; `zsh-antidote` 122 lines (the plugin block is about 55 lines
+rather than 25, because the guards above are written out plainly).
 
 ### Phase 5: scripts and Brewfile
 - `check.sh` first (Phases 2–4 already rely on its logic), then
