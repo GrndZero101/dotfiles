@@ -312,7 +312,7 @@ has a concrete use:
 |---|---|---|
 | `DOTFILES_DIR` | `${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles` (same as shell-config's choice) | put the clone elsewhere, for example `~/projects/github/GrndZero101/dotfiles` on this workstation |
 | `DOTFILES_BRANCH` | `main` | test the installer from a feature branch **before** merging |
-| `DOTFILES_REPO_URL` | `https://github.com/GrndZero101/dotfiles.git` | test from a **local checkout** in a container (`DOTFILES_REPO_URL=/dotfiles`) without pushing |
+| `DOTFILES_REPO_URL` | `https://github.com/GrndZero101/dotfiles.git` | test from a **local checkout** in a container (`DOTFILES_REPO_URL=file:///dotfiles`) without pushing |
 
 No command-line flags. Positional arguments are packages, and the three
 variables cover everything else. Shell-config's `--dir`/`--repo`/`--branch`
@@ -954,7 +954,7 @@ docker build -t dotfiles-box test/                       # once (needs network)
 docker run --rm -it -v "$PWD":/dotfiles:ro dotfiles-box bash
 # inside (as tester):
 git config --global --add safe.directory /dotfiles       # mounted repo has a different owner
-DOTFILES_REPO_URL=/dotfiles DOTFILES_BRANCH="<branch under test>" \
+DOTFILES_REPO_URL=file:///dotfiles DOTFILES_BRANCH="<branch under test>" \
   sh /dotfiles/install.sh zsh-antidote tmux-minimal      # or: zsh-minimal tmux-minimal
 zsh   # no newuser wizard, no errors, prompt and completion work
 tmux  # tmux-minimal config loads, status line shows, h/j/k/l work
