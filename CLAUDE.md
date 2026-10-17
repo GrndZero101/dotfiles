@@ -3,7 +3,8 @@
 GNU Stow dotfiles for Linux and macOS: config for command-line **tools**
 (tmux, sesh, …) plus two deliberately basic **zsh** configs for fresh boxes
 and containers. While `PLAN.md` exists, it is the build brief: follow its
-phases and decisions, and don't re-open what it marks as decided.
+phases and decisions, and don't re-open what it marks as decided. Open
+work (such as the macOS check) lives in `TODO.md`.
 
 ## The Iron Boomer Doctrine
 

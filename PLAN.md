@@ -1148,28 +1148,8 @@ directories.
   and `plugins/` as a real directory.
 
 ### Phase 9: macOS check, then delete the archive
-- Run `./bootstrap.sh` (the default) on a Mac. The tool packages apply
-  there whether or not shell-config is in use. The `zsh-*` packages stay
-  container-only.
-- Note any OS-specific fixes **in the README**, not as OS branches in the
-  configs, unless a branch is truly unavoidable.
-- **TODO (added 2026-10-17): status modules built on Linux only.** Check each
-  on the Mac, in `tmux-full` and then `tmux-raidboss`:
-  - [ ] Disk usage (both): `df -P ~` should report the Data volume
-    (`/System/Volumes/Data`), not the read-only system volume at `/`.
-  - [ ] Clock (both): `%Z` prints a zone name, or an offset for zones
-    without one.
-  - [ ] Battery (raidboss): on a MacBook the pill appears
-    (`pmset -g batt` lists `InternalBattery`); on a desktop Mac it's left out.
-  - [ ] Disk IO and net (raidboss): left out, since there's no `/proc`.
-    Decide whether a macOS version (`iostat`, `netstat -ib`) earns its
-    place in `hud-io.sh`.
-  - [ ] GPU (raidboss): left out without `nvidia-smi`. Apple silicon has
-    no cheap GPU-load command, so leaving it out is probably right.
-  - [ ] Load and uptime (raidboss): catppuccin parses `uptime` output,
-    which differs between macOS and Linux.
-  - [ ] Weather, kube and pomodoro (raidboss) behave as on Linux.
-- Once you're confident: `rm -rf ~/.config/tmux.pre-dotfiles`.
+**Moved to [`TODO.md`](TODO.md) on 2026-10-17**, with the status-module
+checklist and the archive deletion, since this file is being retired.
 
 ---
 
@@ -1184,8 +1164,8 @@ directories.
 - Watch out for apt's renamed binaries if anything ever stops relying on
   brew: Debian/Ubuntu ship `fd` as `fdfind` and `bat` as `batcat`.
 - `scripts/sesh-picker.sh` uses bash arrays and process substitution. Both
-  work in macOS's bash 3.2, so no Homebrew bash is needed. The build session
-  should confirm this on a Mac.
+  work in macOS's bash 3.2, so no Homebrew bash is needed. Confirming it on
+  a Mac is in `TODO.md`.
 - **Windows:** WSL counts as Linux and is already the main machine. Native
   Windows has no tmux and no zsh, and stow needs Perl and symlink
   privileges. **Out of scope.** Revisit only if a real need appears.
