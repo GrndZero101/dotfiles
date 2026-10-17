@@ -147,8 +147,9 @@ work **alongside** it and never compete.
   comments.
 - **Git hooks:** `.pre-commit-config.yaml`, run by prek (`prek install`
   once per clone). Each commit runs `./check.sh`, the built-in hygiene
-  hooks, a pinned shellcheck and shfmt on `*.sh`, and checks the message is
-  Conventional Commits. It uses prek's `repo: builtin`, so plain
-  `pre-commit` can't run it.
+  hooks, a pinned shellcheck and shfmt on `*.sh`, a pinned rumdl on
+  Markdown (`.rumdl.toml`), and checks the message is Conventional
+  Commits. It uses prek's `repo: builtin`, so plain `pre-commit` can't run
+  it.
 - **Not yet:** CHANGELOG, release tags, CONTRIBUTING, SECURITY,
   `.editorconfig`, CI (parked in `TODO.md`). Each needs a real reason first.

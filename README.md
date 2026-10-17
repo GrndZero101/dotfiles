@@ -20,10 +20,12 @@ wget -qO- https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh
 
 > [!CAUTION]
 > Piping a script into `sh` runs it unread. To read it first:
+>
 > ```sh
 > curl -fsSLO https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh
 > less install.sh && sh install.sh
 > ```
+>
 > It never uses `sudo` and never writes outside `$HOME`.
 
 **Prerequisites:** `git` and `stow`, plus the tool each package configures
@@ -117,15 +119,16 @@ stows the new one and installs its plugins.
 > [!TIP]
 > Try `tmux-minimal` without installing it. `-L` starts a separate tmux
 > server, so your sessions aren't touched:
+>
 > ```sh
 > tmux -L minimal -f "$PWD/tmux-minimal/.config/tmux/tmux.conf" new
 > ```
 
-The sesh config in `tmux-full` and `tmux-raidboss` adds two sessions with fixed aliases: `tc` opens
-`tmux.conf` in nvim, and `df` opens the repo. Use `sesh connect tc` from a
-shell, or find them in the <kbd>C-Space</kbd> <kbd>T</kbd> picker. They
-expect the repo at `~/.config/dotfiles`, the installer's default; if you
-cloned elsewhere, symlink it there.
+The sesh config in `tmux-full` and `tmux-raidboss` adds two sessions with
+fixed aliases: `tc` opens `tmux.conf` in nvim, and `df` opens the repo. Use
+`sesh connect tc` from a shell, or find them in the <kbd>C-Space</kbd>
+<kbd>T</kbd> picker. They expect the repo at `~/.config/dotfiles`, the
+installer's default; if you cloned elsewhere, symlink it there.
 
 All tmux configs use the prefix <kbd>C-Space</kbd>. In nested tmux (say
 `tmux-full` locally, `tmux-minimal` over SSH), press it twice to reach the
@@ -134,7 +137,7 @@ inner one: <kbd>C-Space</kbd> <kbd>C-Space</kbd> <kbd>c</kbd>.
 <details>
 <summary><b>Key bindings that differ from stock tmux and zsh</b></summary>
 
-**All tmux configs**
+### All tmux configs
 
 | Keys | Action |
 |---|---|
@@ -170,7 +173,7 @@ inner one: <kbd>C-Space</kbd> <kbd>C-Space</kbd> <kbd>c</kbd>.
 | <kbd>C-Space</kbd> <kbd>r</kbd> | reload whichever config file was loaded |
 | <kbd>C-Space</kbd> <kbd>s</kbd> | built-in session tree, instead of the sesh picker |
 
-**Both zsh configs**
+### Both zsh configs
 
 | Keys | Action |
 |---|---|
@@ -255,7 +258,8 @@ zsh                                                   # then try tmux
   fails fast; `--add-host github.com:10.255.255.1` gives up after 30s.
 - **Other Ubuntu or packages:** `--build-arg UBUNTU=22.04` (tmux 3.2a),
   `--build-arg PKGS="zsh tmux stow git"` (no curl).
-- **Uncommitted changes:** `cp -r /dotfiles ~/dotfiles && ~/dotfiles/bootstrap.sh …`
+- **Uncommitted changes:**
+  `cp -r /dotfiles ~/dotfiles && ~/dotfiles/bootstrap.sh …`
 
 <details>
 <summary><b>Notes for vanilla boxes</b></summary>

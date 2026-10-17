@@ -1,0 +1,18 @@
+# Markdown lint, run by the rumdl hook in .pre-commit-config.yaml.
+# By hand: rumdl check .
+#
+# Added 2026-10-17. Only what the README's GitHub-Markdown rules (CLAUDE.md)
+# need on top of the defaults.
+
+[global]
+# The README uses GitHub alerts (> [!TIP]) and <details>
+flavor = "gfm"
+
+[MD013]
+# The quick-start one-liners are long URLs that can't wrap; prose still does
+code-blocks = false
+
+[MD033]
+# <kbd> for every key binding, <details> for long reference tables, and
+# <code> in a <summary>, where backticks don't render
+allowed-elements = ["kbd", "details", "summary", "b", "code"]

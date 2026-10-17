@@ -60,6 +60,13 @@ repos:
         args: [--write, --indent=2, --case-indent]
         files: \.sh$
 
+  # Markdown lint, configured in .rumdl.toml. Lint only, no --fix: like
+  # shellcheck it stops the commit, and `rumdl fmt` fixes what it can by hand
+  - repo: https://github.com/rvben/rumdl-pre-commit
+    rev: v0.3.0
+    hooks:
+      - id: rumdl
+
   # Enforces the Conventional Commits rule in CLAUDE.md. Its default types
   # include all of CLAUDE.md's, so no args are needed
   - repo: https://github.com/compilerla/conventional-pre-commit

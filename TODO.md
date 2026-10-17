@@ -11,12 +11,14 @@ below was built and tested on Linux (WSL) only.
 
 - [ ] **Install on a Mac.** The tool packages apply there whether or not
   shell-config is in use; the `zsh-*` packages stay container-only.
+
   ```sh
   git clone https://github.com/GrndZero101/dotfiles ~/.config/dotfiles
   cd ~/.config/dotfiles
   ./bootstrap.sh                 # tmux-full, plus its plugins
   # or by hand: stow tmux-full, start tmux, press C-Space I
   ```
+
 - [ ] **Record OS-specific fixes in the README**, not as OS branches in the
   configs, unless a branch is truly unavoidable.
 - [ ] **`sesh-picker.sh` under macOS's bash 3.2.** It uses arrays and
@@ -42,21 +44,6 @@ tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
 - [ ] **Load and uptime (raidboss):** catppuccin parses `uptime` output,
   which differs between macOS and Linux.
 - [ ] **Weather, kube and pomodoro (raidboss)** behave as on Linux.
-
-## This machine
-
-- [ ] **Delete the pre-dotfiles archive** once you trust the cut-over
-  (done 2026-10-14). It holds the old `~/.config/tmux` repo and plugins:
-  ```sh
-  rm -rf ~/.config/tmux.pre-dotfiles
-  ```
-
-## Repo
-
-- [ ] **Markdown lint (rumdl).** Unblocked now that `PLAN.md` is gone. At
-  its defaults it flags the README's deliberate `<kbd>` and `<details>`
-  (MD033), so it needs a `.rumdl.toml` allowing those before it joins
-  `.pre-commit-config.yaml`. Try it by hand first: `rumdl check README.md`.
 
 ## Parked
 
