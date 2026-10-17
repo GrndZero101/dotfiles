@@ -86,10 +86,10 @@ work **alongside** it and never compete.
   zoxide for sesh) belong in the active shell-config profile, not here.
 - Nothing is ever written outside `$HOME`. No `sudo`, no `/etc`, no system
   packages: print the install hint instead.
-- The canonical shell-config checkout is the one in use (the `~/.zshenv`
-  target): `~/projects/github/GrndZero101/tboss/shell-config`. Compare the
-  zsh packages with its `zsh-clean` and `zsh-zero`; ignore the other copy
-  at `~/projects/github/GrndZero101/shell-config`.
+- The canonical shell-config checkout is whichever one `~/.zshenv` links
+  to (`readlink -f ~/.zshenv`); on 2026-10-17 that was
+  `~/projects/github/GrndZero101/shell-config`. Compare the zsh packages
+  with its `zsh-clean` and `zsh-zero`.
 
 ## Portability
 

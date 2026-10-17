@@ -1,0 +1,57 @@
+# Command-line tools for any machine: what shell-config's profiles use
+# (other than dev-fortress), plus classic Unix CLI tools. Generic on purpose:
+# the repo is public, so no casks, App Store, VS Code, winget or language
+# package managers, and nothing tied to one employer, cloud or machine.
+#
+# Install or update everything listed:
+#   brew bundle --file ~/.config/homebrew/Brewfile
+# `brew bundle --global` reads this path only when XDG_CONFIG_HOME is set;
+# otherwise it reads ~/.Brewfile, so pass --file.
+#
+# tmux-full's own extras are in the repo-root Brewfile, which bootstrap.sh
+# checks. The two overlap where a tool serves both.
+#
+# A baseline, not a machine inventory: never make it the Brewfile that
+# shell-config's curated brew module manages (HOMEBREW_BUNDLE_FILE).
+# brew-sync would offer to uninstall everything not listed here, and
+# brew-add or brew-dump --write would write this machine's tools into a
+# public repo. Keep that file private, in shell-config.local. With
+# HOMEBREW_BUNDLE_FILE unset and XDG_CONFIG_HOME set, the module picks this
+# path up on its own, so set HOMEBREW_BUNDLE_FILE on fortress machines.
+
+# shell-config: git is its one hard requirement (with zsh, best taken from
+# the OS so it can be the login shell). The rest are optional per profile
+brew "git"
+brew "fzf"      # zsh-ref-fzftab and zsh-ref-atuin; tmux-full's picker too
+brew "atuin"    # zsh-ref-atuin and zsh-tll-test: shell history
+brew "zoxide"   # zsh-ref-atuin and zsh-tll-test; feeds tmux-full's picker
+brew "starship" # zsh-tll-test: prompt
+brew "eza"      # zsh-tll-test: listing aliases
+brew "direnv"   # zsh-tll-test: per-directory environments
+
+# Find and read
+brew "ripgrep"
+brew "fd"
+brew "bat"
+brew "jq"
+brew "yq"
+
+# System and network
+brew "htop"
+brew "btop"
+brew "duf"
+brew "mtr"
+
+# Git and editing
+brew "git-delta"
+brew "gh"
+brew "neovim"
+brew "lazygit"
+
+# Platform and this repo
+brew "coreutils" if OS.mac? # GNU tools; Linux already has them
+brew "tmux"
+brew "stow"
+brew "shellcheck"
+brew "shfmt"
+brew "glow"

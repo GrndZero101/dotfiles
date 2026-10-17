@@ -52,6 +52,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git/cpu/ram/disk-usage status, clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
+| [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
 | [`zsh-minimal`](zsh-minimal) | `~/.zshrc` for fresh boxes: history, completion menu, vi mode. No plugins, no downloads | zsh | ❌ fresh boxes and containers only |
 | [`zsh-antidote`](zsh-antidote) | `zsh-minimal` plus zsh-vi-mode and fzf, installed by antidote on first start; works offline | zsh, git; curl or wget for fzf | ❌ fresh boxes and containers only |
 
@@ -190,6 +191,7 @@ when you ask; nothing updates itself at startup.
 | What | Command |
 |---|---|
 | The repo | re-run the one-liner, or `git -C ~/.config/dotfiles pull` |
+| `brew` package's tools | `brew bundle --file ~/.config/homebrew/Brewfile` (installs and upgrades) |
 | `tmux-full` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
 | `zsh-antidote` plugins | `antidote update` |
 | `zsh-antidote`'s fzf binary | `"$(antidote path junegunn/fzf)/install" --bin`, after `antidote update` |
@@ -223,6 +225,12 @@ setups. This repo works alongside it and never ships `~/.zshenv`.
 To move a box from `zsh-*` to shell-config, `stow -D` the zsh package, then
 install shell-config. Tool hooks such as zoxide (which feeds the sesh
 picker) belong in your shell-config profile on those machines.
+
+shell-config's curated `brew` module keeps a whole-machine Brewfile in step
+with what's installed (`HOMEBREW_BUNDLE_FILE`). Keep that file private, for
+example in `shell-config.local`. The `brew` package here is a baseline to
+install from, not that file: `brew-sync` against it would offer to uninstall
+everything it doesn't list.
 
 ## Testing on a fresh box
 
