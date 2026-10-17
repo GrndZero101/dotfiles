@@ -277,8 +277,20 @@ Built on the **Iron Boomer Doctrine**: complexity has to earn its place.
 5. Every package works on a vanilla box, even offline (`tmux-full`'s and
    `tmux-raidboss`'s plugins are the documented exceptions).
 
+Three structural choices follow from it:
+
+- **One stow package per tool variant**, not one package at the repo root.
+  Stow then guarantees that only one variant owns a path, each machine
+  stows just the subset it needs, and the README and scripts are never
+  linked into `$HOME`.
+- **`--no-folding`** (in `.stowrc`): stow links files, not directories, so
+  a tool that writes into its config directory (tpm's `plugins/`) never
+  writes into the repo.
+- **No pinning:** plugins track their default branches and update only
+  when you ask.
+
 The full version, with the package conventions, is in
-[`CLAUDE.md`](CLAUDE.md).
+[`CLAUDE.md`](CLAUDE.md). Open and parked work is in [`TODO.md`](TODO.md).
 
 ## License
 

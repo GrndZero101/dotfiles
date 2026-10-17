@@ -2,9 +2,10 @@
 
 GNU Stow dotfiles for Linux and macOS: config for command-line **tools**
 (tmux, sesh, …) plus two deliberately basic **zsh** configs for fresh boxes
-and containers. While `PLAN.md` exists, it is the build brief: follow its
-phases and decisions, and don't re-open what it marks as decided. Open
-work (such as the macOS check) lives in `TODO.md`.
+and containers. Open and parked work lives in `TODO.md`. Decisions live
+where they apply: this file for the rules, the README's Design section for
+readers, and the why next to each line in the configs and scripts. The
+build history (`PLAN.md`, retired 2026-10-17) is in git.
 
 ## The Iron Boomer Doctrine
 
@@ -37,7 +38,9 @@ purpose over the top) and `zsh-antidote` (zsh-vi-mode and fzf via antidote).
 
 1. **One package per tool, or per tool variant:** `<tool>` or
    `<tool>-<variant>`. Variants of one tool are alternatives; install
-   exactly one. Stow enforces this because they own the same paths.
+   exactly one. Stow enforces this because they own the same paths. It's
+   also how machines get different subsets, and why repo-root files (README,
+   scripts) are never stowed.
 2. **A package mirrors `$HOME` exactly.** `tmux-full/.config/tmux/tmux.conf`
    lands at `~/.config/tmux/tmux.conf`; `zsh-minimal/.zshrc` at `~/.zshrc`.
 3. **Prefer XDG** when the tool supports it on the oldest version we care
@@ -54,6 +57,9 @@ purpose over the top) and `zsh-antidote` (zsh-vi-mode and fzf via antidote).
 8. **Companion configs live inside the package they serve.** sesh's config
    only serves `tmux-full`'s picker, so it's `tmux-full/.config/sesh/`.
    Split it out with `git mv` the day it's needed without that package.
+   When variants need the same companion file, an identical one is a
+   relative symlink to the first variant's copy (it can't drift); one that
+   differs is a copy. `tmux-raidboss` does both with `tmux-full`'s files.
 
 **Adding a tool:** create `<tool>/` mirroring its path under `~`, add a
 line to the README packages table, run `./check.sh`.
@@ -80,6 +86,40 @@ work **alongside** it and never compete.
   zoxide for sesh) belong in the active shell-config profile, not here.
 - Nothing is ever written outside `$HOME`. No `sudo`, no `/etc`, no system
   packages: print the install hint instead.
+- The canonical shell-config checkout is the one in use (the `~/.zshenv`
+  target): `~/projects/github/GrndZero101/tboss/shell-config`. Compare the
+  zsh packages with its `zsh-clean` and `zsh-zero`; ignore the other copy
+  at `~/projects/github/GrndZero101/shell-config`.
+
+## Portability
+
+- **Linux and macOS are first-class; WSL counts as Linux.** Native Windows
+  is out of scope (no tmux, no zsh, and stow needs Perl and symlink rights).
+- `tmux-full` and `tmux-raidboss` get their extras from Homebrew on both
+  (`Brewfile`). The minimal and zsh packages need only distro packages, so
+  they suit containers.
+- **No pinning, anywhere: always the latest.** tpm plugins, antidote,
+  zsh-vi-mode and fzf track their default branches. Updates are explicit
+  commands (README, Updating), never automatic at startup.
+- If anything stops relying on brew: Debian/Ubuntu ship `fd` as `fdfind`
+  and `bat` as `batcat`.
+
+## Testing changes
+
+- **tmux with a fake `HOME` needs its own server.** The socket follows the
+  uid and `$TMUX`, not `$HOME`, and tpm trusts an inherited
+  `TMUX_PLUGIN_MANAGER_PATH` over its own detection. Use
+  `env -u TMUX -u TMUX_PANE -u TMUX_PLUGIN_MANAGER_PATH HOME=<tmp>` plus
+  `tmux -L <name>`, or a `tmux` wrapper on `PATH` that adds `-L`, so tpm's
+  calls are isolated too. `TMUX_TMPDIR` paths over about 108 bytes fail
+  ("File name too long").
+- **stow expands the `~` in `.stowrc` from `$HOME`,** so `HOME=<tmp>
+  ./bootstrap.sh` links only inside `<tmp>`.
+- **To see a status line,** attach a client from a second server
+  (`tmux -L outer -f /dev/null new -d "tmux -L <name> attach"`) and
+  `capture-pane -p` it; `#()` jobs need a few seconds to fill in.
+- **The interactive shell on this workstation is zsh,** which doesn't
+  word-split `$var`: pass flag lists as arrays, or test under `sh -c`.
 
 ## Project conventions
 
@@ -101,10 +141,14 @@ work **alongside** it and never compete.
   code fences, relative links. No hand-maintained table of contents.
 - **The repo is public.** No secrets; review before every push. Confirm
   with the user before pushing.
+- **License: MIT,** like shell-config: legal teams pre-approve it, so the
+  repo can be cloned at work. Adapted snippets (the sesh README binding,
+  catppuccin/fzf colours, catppuccin/tmux) are MIT too; keep their credit
+  comments.
 - **Git hooks:** `.pre-commit-config.yaml`, run by prek (`prek install`
   once per clone). Each commit runs `./check.sh`, the built-in hygiene
   hooks, a pinned shellcheck and shfmt on `*.sh`, and checks the message is
   Conventional Commits. It uses prek's `repo: builtin`, so plain
   `pre-commit` can't run it.
 - **Not yet:** CHANGELOG, release tags, CONTRIBUTING, SECURITY,
-  `.editorconfig`, CI. Each needs a real reason first.
+  `.editorconfig`, CI (parked in `TODO.md`). Each needs a real reason first.

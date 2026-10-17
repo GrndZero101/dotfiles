@@ -1,13 +1,13 @@
 # TODO
 
-Open work, newest last. Tick an item when it's done and verified; delete
-it once the result is recorded where it belongs (README, CLAUDE.md, or a
-comment in the config).
+Open work first, then parked ideas. Tick an item when it's done and
+verified; delete it once the result is recorded where it belongs (README,
+CLAUDE.md, or a comment in the config).
 
 ## macOS check
 
-Moved from `PLAN.md` Phase 9 on 2026-10-17. Everything below was built
-and tested on Linux (WSL) only.
+Carried over from the build plan's last phase (2026-10-17). Everything
+below was built and tested on Linux (WSL) only.
 
 - [ ] **Install on a Mac.** The tool packages apply there whether or not
   shell-config is in use; the `zsh-*` packages stay container-only.
@@ -46,7 +46,40 @@ tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
 ## This machine
 
 - [ ] **Delete the pre-dotfiles archive** once you trust the cut-over
-  (`PLAN.md` Phase 8). It holds the old `~/.config/tmux` repo and plugins:
+  (done 2026-10-14). It holds the old `~/.config/tmux` repo and plugins:
   ```sh
   rm -rf ~/.config/tmux.pre-dotfiles
   ```
+
+## Repo
+
+- [ ] **Markdown lint (rumdl).** Unblocked now that `PLAN.md` is gone. At
+  its defaults it flags the README's deliberate `<kbd>` and `<details>`
+  (MD033), so it needs a `.rumdl.toml` allowing those before it joins
+  `.pre-commit-config.yaml`. Try it by hand first: `rumdl check README.md`.
+
+## Parked
+
+Not now: each needs a concrete reason before it moves up.
+
+- **A shared base for `tmux-full` and `tmux-raidboss`.** 45 of tmux-full's
+  47 command lines are also in raidboss. Build one the first time a fix
+  lands in one and not the other. (The zsh pair shares about 60 lines and
+  hasn't drifted.)
+- **CI:** GitHub Actions running `./check.sh` and the container test
+  (README, Testing on a fresh box) on Ubuntu and macOS. A CI badge comes
+  with it.
+- **More tool packages:** `nvim`, `git`, `bat`. For `git`, this machine's
+  config points `credential.helper` at a Windows `.exe` that fails with
+  "Exec format error" inside WSL: a real bug to fix when it arrives. It
+  would use `~/.config/git/config` (XDG).
+- **More zsh plugins** (autosuggestions, syntax highlighting), in
+  `zsh-antidote` only. One line in `.zsh_plugins.txt` each, but each needs
+  its own "what does it earn?" and must pass the offline container tests.
+- **Machine-local overrides:** `source-file -q ~/.config/tmux/local.conf`
+  or `~/.zshrc.local`, when the first machine-specific tweak appears.
+- **gitleaks** in the hooks, if `detect-private-key` and the pre-push
+  review stop being enough.
+- **Popup command prompt:** tmux 3.8's modal-pane prompt works but is
+  brittle and nobody else uses it. Revisit when floating panes settle,
+  expected around tmux 3.9.
