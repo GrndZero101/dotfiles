@@ -4,15 +4,21 @@
 # refuses unsafe combinations, backs up conflicting files, then stows.
 # Naming another variant of an installed tool switches to it.
 # It never runs sudo or writes outside $HOME: it prints install hints instead.
-DEFAULT_PACKAGES="tmux-full"   # change this one line to change the default
+DEFAULT_PACKAGES="tmux-full" # change this one line to change the default
 
 set -eu
 cd "$(dirname "$0")"
 
 say() { printf 'dotfiles: %s\n' "$*"; }
-die() { printf 'dotfiles: %s\n' "$*" >&2; exit 1; }
+die() {
+  printf 'dotfiles: %s\n' "$*" >&2
+  exit 1
+}
 have() { command -v "$1" >/dev/null 2>&1; }
-has_pkg() { case " $pkgs " in *" $1 "*) return 0 ;; esac; return 1; }
+has_pkg() {
+  case " $pkgs " in *" $1 "*) return 0 ;; esac
+  return 1
+}
 
 # A package is installed if one of its files links into it. With
 # --no-folding each file is its own link, so the first one found will do
@@ -72,7 +78,8 @@ fi
 if [ -n "$old" ]; then
   case $old in *tmux-*)
     ! tmux has-session 2>/dev/null ||
-      die "tmux is running and would keep$old's settings. Quit it (tmux kill-server), then rerun this from a plain terminal" ;;
+      die "tmux is running and would keep$old's settings. Quit it (tmux kill-server), then rerun this from a plain terminal"
+    ;;
   esac
   say "switching: unstowing$old"
   # shellcheck disable=SC2086 # old is a space-separated list of names

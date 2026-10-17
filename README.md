@@ -106,8 +106,9 @@ Day to day it's plain `stow`, run from the repo root (it reads `.stowrc`):
 | Switch tmux variant | `tmux kill-server && stow -D tmux-full && stow tmux-raidboss`, then start tmux; the first time, press <kbd>C-Space</kbd> <kbd>I</kbd> to install its plugins |
 | Switch zsh variant | `stow -D zsh-minimal && stow zsh-antidote`, then start a new shell |
 | Validate the repo | `./check.sh` |
+| Check every commit | `prek install`, once per clone; `prek run --all-files` runs the hooks by hand |
 
-`./bootstrap.sh <variant>` does the same switch with checks: it finds the
+`./bootstrap.sh <variant>` does either "Switch" row with checks: it finds the
 variant installed now, refuses while tmux is running (a reload can't unset
 the old config's settings, so tmux must restart), unstows the old variant,
 stows the new one and installs its plugins.

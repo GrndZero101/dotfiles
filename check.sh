@@ -7,7 +7,10 @@ cd "$(dirname "$0")"
 
 failed=0
 ok() { printf 'dotfiles: ok    %s\n' "$1"; }
-fail() { printf 'dotfiles: FAIL  %s\n' "$1" >&2; failed=1; }
+fail() {
+  printf 'dotfiles: FAIL  %s\n' "$1" >&2
+  failed=1
+}
 warn() { printf 'dotfiles: warn  %s\n' "$1" >&2; }
 have() { command -v "$1" >/dev/null 2>&1; }
 

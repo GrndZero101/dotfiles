@@ -14,7 +14,10 @@ main() {
   export GIT_TERMINAL_PROMPT=0
 
   case ${1:-} in
-    -h | --help) usage; return 0 ;;
+    -h | --help)
+      usage
+      return 0
+      ;;
   esac
 
   command -v git >/dev/null 2>&1 ||
@@ -35,7 +38,10 @@ main() {
 }
 
 say() { printf 'dotfiles: %s\n' "$*"; }
-die() { printf 'dotfiles: %s\n' "$*" >&2; exit 1; }
+die() {
+  printf 'dotfiles: %s\n' "$*" >&2
+  exit 1
+}
 
 usage() {
   cat <<'EOF'

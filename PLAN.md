@@ -442,7 +442,8 @@ tmux loading the whole config, and nothing caught it.
    anything other than `~/.config`.
 
 Exit non-zero on any failure, so it can later become a git pre-commit hook
-or a CI step without changes. Neither of those is in scope yet.
+or a CI step without changes. **The hook exists since 2026-10-17** (prek);
+CI is still parked.
 
 ---
 
@@ -1272,7 +1273,9 @@ Each item needs a concrete reason before it moves up:
 - **Automation:**
   - CI: GitHub Actions running `check.sh` and the Phase 6 container test on
     Ubuntu and macOS.
-  - A pre-commit hook running `check.sh`.
+  - ~~A pre-commit hook running `check.sh`.~~ **Done 2026-10-17:**
+    `.pre-commit-config.yaml` (prek) runs it, plus hygiene hooks, a pinned
+    shellcheck, shfmt and a commit-message check.
 - **Shared bases between variants:** one `base.conf` for both tmux configs,
   or a shared zsh core file. Only worth it if the duplicated lines start
   drifting. Today the overlap is about 20 lines for tmux and 60 for zsh,

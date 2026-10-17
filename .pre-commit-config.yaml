@@ -1,0 +1,81 @@
+# The gate for this repo. Run with: prek run --all-files
+# Install the git shims (both, from default_install_hook_types): prek install
+# By hand, the repo check is ./check.sh, and a commit message must be
+# Conventional Commits (CLAUDE.md).
+#
+# Added 2026-10-17. Its reasons: ./check.sh only ran when remembered, before
+# a push of six commits; Conventional Commits and "no secrets, the repo is
+# public" were habits, not checks.
+#
+# NOTE: `repo: builtin` is a prek extension and is NOT understood by plain
+# `pre-commit`. That is the trade for hygiene hooks that clone nothing and
+# work offline (doctrine rule 7).
+
+default_install_hook_types: [pre-commit, commit-msg]
+# Hooks without stages of their own skip commit-msg, so a commit doesn't run
+# check.sh twice
+default_stages: [pre-commit, manual]
+
+repos:
+  - repo: builtin
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      # sesh.toml: a parse error there breaks the prefix + T picker
+      - id: check-toml
+      # tmux-raidboss links files to tmux-full's. A rename there would leave
+      # a dangling link that stow happily installs
+      - id: check-symlinks
+      # Git on Windows (core.symlinks=false) checks those links out as text
+      # files holding the target path; this stops one being committed back
+      - id: destroyed-symlinks
+      # tmux runs the scripts by path, so a lost exec bit breaks a binding or
+      # a status module
+      - id: check-shebang-scripts-are-executable
+      # macOS is first-class and its filesystem is case-insensitive
+      - id: check-case-conflict
+      # The repo is public
+      - id: detect-private-key
+      # No no-commit-to-branch: this repo commits to main directly
+
+  # check.sh lints only if shellcheck is installed, so it still runs on a
+  # vanilla box. This pinned copy makes the lint happen on every commit, on
+  # any machine. *.sh only: shellcheck doesn't support zsh, and check.sh's
+  # zsh -n covers the .zshrc files
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        files: \.sh$
+
+  # Formatting, in the style the scripts already use: 2-space indent and
+  # indented case branches. *.sh only: shfmt's zsh support is partial and it
+  # rewrites zsh-only syntax in the .zshrc files
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.14.1-1
+    hooks:
+      - id: shfmt
+        args: [--write, --indent=2, --case-indent]
+        files: \.sh$
+
+  # Enforces the Conventional Commits rule in CLAUDE.md. Its default types
+  # include all of CLAUDE.md's, so no args are needed
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.4.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      # The repo's own check: configs parse, scripts lint, every package
+      # stows. It checks the whole repo (a new package directory matters as
+      # much as an edited file) in well under a second, so it always runs
+      - id: check
+        name: ./check.sh
+        entry: ./check.sh
+        language: system
+        pass_filenames: false
+        always_run: true

@@ -44,9 +44,15 @@ net_sample() {
 }
 
 case ${1:-} in
-  disk) [ -r /proc/diskstats ] || exit 0; wanted=$(disks) ;;
+  disk)
+    [ -r /proc/diskstats ] || exit 0
+    wanted=$(disks)
+    ;;
   net) [ -r /proc/net/dev ] || exit 0 ;;
-  *) printf 'usage: %s disk|net\n' "$0" >&2; exit 2 ;;
+  *)
+    printf 'usage: %s disk|net\n' "$0" >&2
+    exit 2
+    ;;
 esac
 
 # shellcheck disable=SC2046 # each sample is two numbers, split on purpose

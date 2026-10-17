@@ -84,8 +84,10 @@ work **alongside** it and never compete.
 
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`,
   `test:`), scoped by package where it helps: `feat(tmux-minimal): …`.
-- **Scripts:** POSIX `sh`, `set -eu`, about 100 lines max each, shellcheck
-  clean (`install.sh` with `--shell=sh`). Output is prefixed `dotfiles: `;
+- **Scripts:** POSIX `sh`, `set -eu`, about 100 lines max each
+  (`bootstrap.sh`, about 135 with variant switching, is the accepted
+  exception), shellcheck clean (`install.sh` with `--shell=sh`), formatted
+  with `shfmt --indent=2 --case-indent`. Output is prefixed `dotfiles: `;
   progress to stdout, errors to stderr. Exit 0 means done; non-zero means
   nothing was half-done. Never use `stow --adopt`.
 - **README:** order is title and tagline, badges (only true ones: MIT now,
@@ -98,5 +100,10 @@ work **alongside** it and never compete.
   code fences, relative links. No hand-maintained table of contents.
 - **The repo is public.** No secrets; review before every push. Confirm
   with the user before pushing.
+- **Git hooks:** `.pre-commit-config.yaml`, run by prek (`prek install`
+  once per clone). Each commit runs `./check.sh`, the built-in hygiene
+  hooks, a pinned shellcheck and shfmt on `*.sh`, and checks the message is
+  Conventional Commits. It uses prek's `repo: builtin`, so plain
+  `pre-commit` can't run it.
 - **Not yet:** CHANGELOG, release tags, CONTRIBUTING, SECURITY,
-  `.editorconfig`, CI, pre-commit hooks. Each needs a real reason first.
+  `.editorconfig`, CI. Each needs a real reason first.
