@@ -187,6 +187,7 @@ dotfiles/
 │   └── Dockerfile           # vanilla Ubuntu + zsh/tmux/stow/git/curl, for container tests
 │
 ├── tmux-full/               # XDG layout: the bells-and-whistles config (DEFAULT)
+│   ├── .gitmux.conf         # companion config (convention 8): serves the git pill
 │   └── .config/
 │       ├── tmux/
 │       │   ├── tmux.conf
@@ -194,6 +195,17 @@ dotfiles/
 │       │       └── sesh-picker.sh
 │       └── sesh/            # companion config (convention 8): serves prefix + T
 │           └── sesh.toml
+│
+├── tmux-raidboss/           # tmux-full plus a HUD line and pane titles
+│   ├── .gitmux.conf         # -> ../tmux-full/.gitmux.conf (identical)
+│   └── .config/
+│       ├── tmux/
+│       │   ├── tmux.conf    # standalone, not a base + overlay
+│       │   └── scripts/
+│       │       ├── hud-io.sh       # disk and net throughput from /proc
+│       │       └── sesh-picker.sh  # -> tmux-full's (identical)
+│       └── sesh/
+│           └── sesh.toml    # copy: its tc session opens this package's tmux.conf
 │
 ├── tmux-minimal/            # XDG layout: pure tmux, no plugins
 │   └── .config/tmux/
@@ -342,6 +354,9 @@ DEFAULT_PACKAGES="tmux-full"   # change this one line to change the default
 ```
 This is the first non-comment line of the script, so changing the default
 is a one-line edit. Any arguments replace the default entirely.
+**Added 2026-10-17:** with no arguments, a variant that's already installed
+stays (installed `tmux-raidboss` beats default `tmux-full`), because
+re-running the installer to update mustn't switch you back.
 
 **Common combinations** (for the README, not code):
 
@@ -369,6 +384,14 @@ Steps:
 3. **Refuse two variants of the same tool** (for example `tmux-full
    tmux-minimal`) with a clear message. Stow would refuse anyway, but less
    readably.
+3a. **Switch variants (added 2026-10-17).** Naming a variant while another
+   variant of that tool is installed (a file of it links into the package)
+   unstows the old one first; without that, stow stops on its links. For
+   `tmux-*`, **refuse while a tmux server runs**: reloading can't unset the
+   options the old config set (`status 2`, pane titles, extra bindings), so
+   the only clean switch is a restart. Refuse before changing anything, and
+   don't kill the server for the user (doctrine rule 6). This keeps
+   switching in plain `bootstrap.sh <variant>`, not a separate wrapper.
 4. **Guard against shell-config.** When a `zsh-*` package is requested and
    `~/.zshenv` exists, stop with a clear message. Today that file means
    shell-config is managing the shell, so a stowed `~/.zshrc` would be
@@ -381,7 +404,7 @@ Steps:
    **Never use `stow --adopt`**: it overwrites the repo's version with
    whatever is on the machine, which is the opposite of what we want.
 7. **Stow** the packages.
-8. **For `tmux-full` only,** bootstrap tpm: clone
+8. **For `tmux-full` and `tmux-raidboss`,** bootstrap tpm: clone
    `https://github.com/tmux-plugins/tpm` to `~/.config/tmux/plugins/tpm` if
    it isn't there, then run `~/.config/tmux/plugins/tpm/bin/install_plugins`.
    This must happen **before tmux first starts** (see the known issue under
@@ -633,7 +656,7 @@ Doctrine rule 7 holds.
 
 ---
 
-## The two tmux configs
+## The tmux configs
 
 ### `tmux-full` (the default): what we have today
 This is `~/.config/tmux` as of commit **`778c78c`**. Nothing in it is new;
@@ -642,14 +665,60 @@ it's being migrated.
   in `message-style`, and floating-pane-era defaults.
 - Plugins via tpm, **unpinned (decided)**: tmux-sensible,
   vim-tmux-navigator (with a `claude` process-name pattern so `C-j` reaches
-  Claude Code), tmux-yank, tmux-cpu, tmux-weather, catppuccin (mocha,
-  loaded twice on purpose, documented inline), and
-  tmux-nerd-font-window-name.
+  Claude Code), tmux-yank, tmux-cpu, catppuccin (mocha, loaded twice on
+  purpose, documented inline), and tmux-nerd-font-window-name.
+  **2026-10-17:** tmux-weather moved to `tmux-raidboss`, the clock shows
+  the time zone (`%Z`), and a disk-usage pill (a `df -P ~` one-liner, so
+  no script) follows RAM.
 - `prefix + T` opens the sesh session picker
   (`scripts/sesh-picker.sh`). It's an fzf popup themed from catppuccin's
   `@thm_*` palette.
 - External tools: `sesh`, `fzf`, `fd`, `zoxide`, `gitmux`. These go in the
   `Brewfile`.
+- `~/.gitmux.conf` ships in `tmux-full` (convention 8: it only serves the
+  status line). **Why (`6e549f1`, 2026-10-14):** without it, gitmux prints
+  nothing and the status pill is empty. It drops the remote branch, caps
+  branch names at 32 chars (trimmed right), adds diff stats, hides the clean
+  ✔ and shows divergence as `↑1 ↓2`. The settings follow the common choices
+  in a 2026-10-17 survey of ~100 public `.gitmux.conf` files.
+
+### `tmux-raidboss`: tmux-full with everything lit up (added 2026-10-17)
+The user asked for an over-the-top variant to hold what doesn't earn a
+place in `tmux-full`. It's an accepted doctrine exception (CLAUDE.md),
+like `tmux-full`. Decisions made with the user, or forced by testing:
+- **A two-line status bar at the top.** Line 1 is `tmux-full`'s (session,
+  windows, gitmux, clock). Line 2 is the HUD: host, user, directory, kube
+  context, pomodoro on the left; cpu, GPU, ram, load, disk usage, disk
+  IOPS and throughput, network throughput, battery, weather, uptime on the
+  right.
+  Every pane gets a catppuccin title bar.
+- **The HUD is built in `status-left`/`status-right`, then moved** into
+  `status-format[1]` after tpm. tmux-cpu, tmux-battery, tmux-weather,
+  tmux-kubectx and pomodoro-plus only rewrite their placeholders in those
+  two options (and `pane-border-format`).
+- **Modules whose need is missing are left out at load** (`if-shell`):
+  kube without a current context shows a bare `:`, battery without a
+  battery shows a lone `?` icon, GPU needs `nvidia-smi`, disk and net need
+  `/proc`. Reload after installing one.
+- **Disk and net come from `scripts/hud-io.sh`** (POSIX sh, one-second
+  sample from `/proc`). No maintained plugin does IOPS or throughput.
+  Linux only; macOS gets nothing until Phase 9's Mac check says otherwise.
+- **Custom modules set `MODULE_NAME` with `set-environment -gh`**, not
+  catppuccin's `%hidden`: `%hidden` runs when the file is parsed, before
+  any `source` runs, so every module was built as catppuccin's last one.
+- **`setw -g pane-border-status top`**: catppuccin 2.3.1 never reads its own
+  `@catppuccin_pane_border_status`.
+- **pomodoro-plus toggles on `prefix + b`.** Its default `p` would take
+  `prefix + p` (previous window), and it also binds `C-` and `M-` of it.
+- **Distinct module colours**: catppuccin gives cpu, ram and weather one
+  yellow, and load and kube one blue.
+- **Companion files**: `.gitmux.conf` and `scripts/sesh-picker.sh` are
+  relative symlinks to `tmux-full`'s, since they're byte-identical and
+  can't drift that way. `sesh.toml` is a copy, because its `tc` session
+  opens this package's `tmux.conf`. This is not a shared base (parking
+  lot): `tmux.conf` itself is a full, standalone file.
+- **Weather moved here from `tmux-full`**, which also lost its
+  commented-out uptime, load and battery lines (doctrine rule 5).
 
 ### `tmux-minimal`: pure tmux, written from scratch
 Same muscle memory, no plugins, no external tools, every line justified.
@@ -1083,6 +1152,22 @@ directories.
   container-only.
 - Note any OS-specific fixes **in the README**, not as OS branches in the
   configs, unless a branch is truly unavoidable.
+- **TODO (added 2026-10-17): status modules built on Linux only.** Check each
+  on the Mac, in `tmux-full` and then `tmux-raidboss`:
+  - [ ] Disk usage (both): `df -P ~` should report the Data volume
+    (`/System/Volumes/Data`), not the read-only system volume at `/`.
+  - [ ] Clock (both): `%Z` prints a zone name, or an offset for zones
+    without one.
+  - [ ] Battery (raidboss): on a MacBook the pill appears
+    (`pmset -g batt` lists `InternalBattery`); on a desktop Mac it's left out.
+  - [ ] Disk IO and net (raidboss): left out, since there's no `/proc`.
+    Decide whether a macOS version (`iostat`, `netstat -ib`) earns its
+    place in `hud-io.sh`.
+  - [ ] GPU (raidboss): left out without `nvidia-smi`. Apple silicon has
+    no cheap GPU-load command, so leaving it out is probably right.
+  - [ ] Load and uptime (raidboss): catppuccin parses `uptime` output,
+    which differs between macOS and Linux.
+  - [ ] Weather, kube and pomodoro (raidboss) behave as on Linux.
 - Once you're confident: `rm -rf ~/.config/tmux.pre-dotfiles`.
 
 ---
@@ -1111,7 +1196,8 @@ directories.
 **Open:** none. The build session can start straight away.
 
 **Already decided (2026-10-14):**
-- **Stow package names:** `tmux-full`, `tmux-minimal`, `zsh-antidote`,
+- **Stow package names:** `tmux-full`, `tmux-minimal`, `tmux-raidboss`
+  (added 2026-10-17), `zsh-antidote`,
   `zsh-minimal`. Variants of the same tool are alternatives.
 - **sesh config ships inside `tmux-full`** (convention 8), not as its own
   package. It only serves `tmux-full`'s `prefix + T` picker, and this way
@@ -1163,7 +1249,8 @@ directories.
 ## Deliberately not now (parking lot)
 
 Each item needs a concrete reason before it moves up:
-- **More tool packages:** `nvim`, `git`, `bat`, `gitmux`. For `git`, the WSL
+- **More tool packages:** `nvim`, `git`, `bat`. (`gitmux`'s config now
+  lives in `tmux-full`; split it out only if it's needed without tmux.) For `git`, the WSL
   config points `credential.helper` at a Windows `.exe` that fails with
   "Exec format error" inside WSL, so there's a real bug to fix when that
   package arrives. `git` supports XDG (`~/.config/git/config`), so it would

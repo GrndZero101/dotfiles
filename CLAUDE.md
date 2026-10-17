@@ -29,7 +29,8 @@ it?" If there's no good answer, it doesn't go in.
 
 `tmux-minimal` and `zsh-minimal` follow the doctrine with **no exceptions**:
 no plugins, no downloads. The accepted exceptions are `tmux-full` (tpm
-plugins) and `zsh-antidote` (zsh-vi-mode and fzf via antidote).
+plugins), `tmux-raidboss` (tmux-full plus a HUD of plugin modules, on
+purpose over the top) and `zsh-antidote` (zsh-vi-mode and fzf via antidote).
 
 ## Package conventions
 

@@ -37,7 +37,7 @@ flowchart LR
   B -->|re-run| D[git pull]
   C --> E[bootstrap.sh]
   D --> E
-  E --> F["checks, backs up<br>conflicting files"]
+  E --> F["checks, backs up<br>conflicting files,<br>unstows another variant"]
   F --> G[stow packages]
 ```
 
@@ -49,25 +49,49 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 
 | Package | What it is | Requires | Safe on shell-config machines |
 |---|---|---|---|
-| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, cpu/weather/git status | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
+| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git/cpu/ram/disk-usage status, clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
+| [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`zsh-minimal`](zsh-minimal) | `~/.zshrc` for fresh boxes: history, completion menu, vi mode. No plugins, no downloads | zsh | ❌ fresh boxes and containers only |
 | [`zsh-antidote`](zsh-antidote) | `zsh-minimal` plus zsh-vi-mode and fzf, installed by antidote on first start; works offline | zsh, git; curl or wget for fzf | ❌ fresh boxes and containers only |
 
 Variants of the same tool are alternatives: install exactly one.
 
+<details>
+<summary><b>What <code>tmux-raidboss</code>'s HUD line shows, and what each module needs</b></summary>
+
+Modules whose need isn't met are left out when the config loads, so a
+missing tool removes one pill rather than leaving a broken one. Reload the
+config (<kbd>C-Space</kbd> <kbd>R</kbd>) after adding one.
+
+| Side | Module | Needs |
+|---|---|---|
+| left | host, user, directory | nothing |
+| left | Kubernetes context and namespace | `kubectl` with a current context |
+| left | pomodoro timer (empty until started) | nothing |
+| right | cpu, ram, load, disk usage | nothing |
+| right | GPU load | `nvidia-smi` |
+| right | disk IOPS and throughput, network throughput | Linux (reads `/proc`) |
+| right | battery | a battery |
+| right | weather | internet (wttr.in); shows its last value offline |
+| right | uptime | nothing |
+
+</details>
+
 | Machine | Packages |
 |---|---|
 | Workstation with shell-config | `tmux-full` (the default) |
+| Workstation, everything on screen | `tmux-raidboss` |
 | Server where you only want tmux | `tmux-minimal` |
 | Fresh container, full comfort | `zsh-antidote tmux-minimal` |
 | Fresh container, nothing downloaded | `zsh-minimal tmux-minimal` |
 
 > [!NOTE]
-> `tmux-full` needs **tmux 3.8+** (it uses `command-prompt -P`). Older
-> distro tmux (Ubuntu 24.04 ships 3.4) gets `tmux-minimal`, or tmux from
-> Homebrew. `bootstrap.sh` installs its plugins; if you stow `tmux-full` by
-> hand, press <kbd>C-Space</kbd> <kbd>I</kbd> once in tmux to install them.
+> `tmux-full` and `tmux-raidboss` need **tmux 3.8+** (they use
+> `command-prompt -P`). Older distro tmux (Ubuntu 24.04 ships 3.4) gets
+> `tmux-minimal`, or tmux from Homebrew. `bootstrap.sh` installs their
+> plugins; if you stow one by hand, press <kbd>C-Space</kbd> <kbd>I</kbd>
+> once in tmux to install them.
 
 ## Usage
 
@@ -79,9 +103,14 @@ Day to day it's plain `stow`, run from the repo root (it reads `.stowrc`):
 | Remove a package | `stow -D tmux-full` |
 | Re-link after adding files | `stow -R tmux-full` |
 | Dry run | `stow -n -v tmux-full` |
-| Switch tmux variant | `stow -D tmux-full && stow tmux-minimal` |
-| Switch zsh variant | `stow -D zsh-minimal && stow zsh-antidote` |
+| Switch tmux variant | `tmux kill-server && stow -D tmux-full && stow tmux-raidboss`, then start tmux; the first time, press <kbd>C-Space</kbd> <kbd>I</kbd> to install its plugins |
+| Switch zsh variant | `stow -D zsh-minimal && stow zsh-antidote`, then start a new shell |
 | Validate the repo | `./check.sh` |
+
+`./bootstrap.sh <variant>` does the same switch with checks: it finds the
+variant installed now, refuses while tmux is running (a reload can't unset
+the old config's settings, so tmux must restart), unstows the old variant,
+stows the new one and installs its plugins.
 
 > [!TIP]
 > Try `tmux-minimal` without installing it. `-L` starts a separate tmux
@@ -90,20 +119,20 @@ Day to day it's plain `stow`, run from the repo root (it reads `.stowrc`):
 > tmux -L minimal -f "$PWD/tmux-minimal/.config/tmux/tmux.conf" new
 > ```
 
-`tmux-full`'s sesh config adds two sessions with fixed aliases: `tc` opens
+The sesh config in `tmux-full` and `tmux-raidboss` adds two sessions with fixed aliases: `tc` opens
 `tmux.conf` in nvim, and `df` opens the repo. Use `sesh connect tc` from a
 shell, or find them in the <kbd>C-Space</kbd> <kbd>T</kbd> picker. They
 expect the repo at `~/.config/dotfiles`, the installer's default; if you
 cloned elsewhere, symlink it there.
 
-Both tmux configs use the prefix <kbd>C-Space</kbd>. In nested tmux (say
+All tmux configs use the prefix <kbd>C-Space</kbd>. In nested tmux (say
 `tmux-full` locally, `tmux-minimal` over SSH), press it twice to reach the
 inner one: <kbd>C-Space</kbd> <kbd>C-Space</kbd> <kbd>c</kbd>.
 
 <details>
 <summary><b>Key bindings that differ from stock tmux and zsh</b></summary>
 
-**Both tmux configs**
+**All tmux configs**
 
 | Keys | Action |
 |---|---|
@@ -111,7 +140,7 @@ inner one: <kbd>C-Space</kbd> <kbd>C-Space</kbd> <kbd>c</kbd>.
 | <kbd>C-Space</kbd> <kbd>"</kbd> / <kbd>%</kbd> / <kbd>c</kbd> | split or new window, keeping the current directory |
 | <kbd>v</kbd>, <kbd>y</kbd> in copy mode | vi selection; copy to the system clipboard (OSC 52, works over SSH) |
 
-**`tmux-full` only**
+**`tmux-full` and `tmux-raidboss`**
 
 | Keys | Action |
 |---|---|
@@ -120,6 +149,15 @@ inner one: <kbd>C-Space</kbd> <kbd>C-Space</kbd> <kbd>c</kbd>.
 | <kbd>C-Space</kbd> <kbd>:</kbd> | command prompt inside the active pane |
 | <kbd>C-Space</kbd> <kbd>R</kbd> | reload the config (tmux-sensible) |
 | <kbd>C-Space</kbd> <kbd>I</kbd> / <kbd>U</kbd> | install / update plugins (tpm) |
+
+**`tmux-raidboss` only**
+
+| Keys | Action |
+|---|---|
+| <kbd>C-Space</kbd> <kbd>b</kbd> | start / pause a pomodoro, tmux-pomodoro-plus (<kbd>p</kbd> stays previous window) |
+| <kbd>C-Space</kbd> <kbd>C-b</kbd> / <kbd>M-b</kbd> | pomodoro menu / custom length |
+| <kbd>C-Space</kbd> <kbd>P</kbd> / <kbd>_</kbd> / <kbd>e</kbd> | cancel / skip / restart it |
+| <kbd>C-Space</kbd> <kbd>H</kbd> | hide / show the HUD line |
 
 **`tmux-minimal` only**
 
@@ -151,7 +189,7 @@ when you ask; nothing updates itself at startup.
 | What | Command |
 |---|---|
 | The repo | re-run the one-liner, or `git -C ~/.config/dotfiles pull` |
-| `tmux-full` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
+| `tmux-full` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
 | `zsh-antidote` plugins | `antidote update` |
 | `zsh-antidote`'s fzf binary | `"$(antidote path junegunn/fzf)/install" --bin`, after `antidote update` |
 
@@ -235,8 +273,8 @@ Built on the **Iron Boomer Doctrine**: complexity has to earn its place.
 2. No abstraction before the second use.
 3. Plain tools used directly: `stow`, not a wrapper.
 4. Fail loudly, not cleverly.
-5. Every package works on a vanilla box, even offline (`tmux-full`'s
-   plugins are the documented exception).
+5. Every package works on a vanilla box, even offline (`tmux-full`'s and
+   `tmux-raidboss`'s plugins are the documented exceptions).
 
 The full version, with the package conventions, is in
 [`CLAUDE.md`](CLAUDE.md).
