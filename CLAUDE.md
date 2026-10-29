@@ -32,7 +32,9 @@ it?" If there's no good answer, it doesn't go in.
 `tmux-minimal` and `zsh-minimal` follow the doctrine with **no exceptions**:
 no plugins, no downloads. The accepted exceptions are `tmux-full` (tpm
 plugins), `tmux-raidboss` (tmux-full plus a HUD of plugin modules, on
-purpose over the top) and `zsh-antidote` (zsh-vi-mode and fzf via antidote).
+purpose over the top), `tmux-quiet` (tmux-full with fewer status jobs, for
+endpoint-protected laptops) and `zsh-antidote` (zsh-vi-mode and fzf via
+antidote).
 
 ## Package conventions
 
@@ -59,7 +61,8 @@ purpose over the top) and `zsh-antidote` (zsh-vi-mode and fzf via antidote).
    Split it out with `git mv` the day it's needed without that package.
    When variants need the same companion file, an identical one is a
    relative symlink to the first variant's copy (it can't drift); one that
-   differs is a copy. `tmux-raidboss` does both with `tmux-full`'s files.
+   differs is a copy. `tmux-raidboss` and `tmux-quiet` do both with
+   `tmux-full`'s files.
 
 **Adding a tool:** create `<tool>/` mirroring its path under `~`, add a
 line to the README packages table, run `./check.sh`.
@@ -95,9 +98,9 @@ work **alongside** it and never compete.
 
 - **Linux and macOS are first-class; WSL counts as Linux.** Native Windows
   is out of scope (no tmux, no zsh, and stow needs Perl and symlink rights).
-- `tmux-full` and `tmux-raidboss` get their extras from Homebrew on both
-  (`Brewfile`). The minimal and zsh packages need only distro packages, so
-  they suit containers.
+- `tmux-full`, `tmux-raidboss` and `tmux-quiet` get their extras from
+  Homebrew on both (`Brewfile`). The minimal and zsh packages need only
+  distro packages, so they suit containers.
 - **No pinning, anywhere: always the latest.** tpm plugins, antidote,
   zsh-vi-mode and fzf track their default branches. Updates are explicit
   commands (README, Updating), never automatic at startup.

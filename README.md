@@ -52,6 +52,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | Package | What it is | Requires | Safe on shell-config machines |
 |---|---|---|---|
 | [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git/cpu/ram/disk-usage status, clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
+| [`tmux-quiet`](tmux-quiet) | `tmux-full` without the git and disk usage pills, refreshing every 15s instead of 5s: fewer process starts and file writes for endpoint protection to scan on corporate laptops | as `tmux-full`, without gitmux | ✅ |
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
@@ -85,16 +86,17 @@ config (<kbd>C-Space</kbd> <kbd>R</kbd>) after adding one.
 |---|---|
 | Workstation with shell-config | `tmux-full` (the default) |
 | Workstation, everything on screen | `tmux-raidboss` |
+| Corporate laptop with endpoint protection | `tmux-quiet` |
 | Server where you only want tmux | `tmux-minimal` |
 | Fresh container, full comfort | `zsh-antidote tmux-minimal` |
 | Fresh container, nothing downloaded | `zsh-minimal tmux-minimal` |
 
 > [!NOTE]
-> `tmux-full` and `tmux-raidboss` need **tmux 3.8+** (they use
-> `command-prompt -P`). Older distro tmux (Ubuntu 24.04 ships 3.4) gets
-> `tmux-minimal`, or tmux from Homebrew. `bootstrap.sh` installs their
-> plugins; if you stow one by hand, press <kbd>C-Space</kbd> <kbd>I</kbd>
-> once in tmux to install them.
+> The tpm variants (`tmux-full`, `tmux-quiet`, `tmux-raidboss`) need
+> **tmux 3.8+** (they use `command-prompt -P`). Older distro tmux (Ubuntu
+> 24.04 ships 3.4) gets `tmux-minimal`, or tmux from Homebrew.
+> `bootstrap.sh` installs their plugins; if you stow one by hand, press
+> <kbd>C-Space</kbd> <kbd>I</kbd> once in tmux to install them.
 
 ## Usage
 
@@ -124,7 +126,7 @@ stows the new one and installs its plugins.
 > tmux -L minimal -f "$PWD/tmux-minimal/.config/tmux/tmux.conf" new
 > ```
 
-The sesh config in `tmux-full` and `tmux-raidboss` adds two sessions with
+The sesh config in the tpm variants adds two sessions with
 fixed aliases: `tc` opens `tmux.conf` in nvim, and `df` opens the repo. Use
 `sesh connect tc` from a shell, or find them in the <kbd>C-Space</kbd>
 <kbd>T</kbd> picker. They expect the repo at `~/.config/dotfiles`, the
@@ -145,7 +147,7 @@ inner one: <kbd>C-Space</kbd> <kbd>C-Space</kbd> <kbd>c</kbd>.
 | <kbd>C-Space</kbd> <kbd>"</kbd> / <kbd>%</kbd> / <kbd>c</kbd> | split or new window, keeping the current directory |
 | <kbd>v</kbd>, <kbd>y</kbd> in copy mode | vi selection; copy to the system clipboard (OSC 52, works over SSH) |
 
-**`tmux-full` and `tmux-raidboss`**
+**`tmux-full`, `tmux-quiet` and `tmux-raidboss`**
 
 | Keys | Action |
 |---|---|
@@ -195,7 +197,7 @@ when you ask; nothing updates itself at startup.
 |---|---|
 | The repo | re-run the one-liner, or `git -C ~/.config/dotfiles pull` |
 | `brew` package's tools | `brew bundle --file ~/.config/homebrew/Brewfile` (installs and upgrades) |
-| `tmux-full` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
+| `tmux-full` / `tmux-quiet` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
 | `zsh-antidote` plugins | `antidote update` |
 | `zsh-antidote`'s fzf binary | `"$(antidote path junegunn/fzf)/install" --bin`, after `antidote update` |
 
@@ -286,8 +288,8 @@ Built on the **Iron Boomer Doctrine**: complexity has to earn its place.
 2. No abstraction before the second use.
 3. Plain tools used directly: `stow`, not a wrapper.
 4. Fail loudly, not cleverly.
-5. Every package works on a vanilla box, even offline (`tmux-full`'s and
-   `tmux-raidboss`'s plugins are the documented exceptions).
+5. Every package works on a vanilla box, even offline (the tpm variants'
+   plugins are the documented exceptions).
 
 Three structural choices follow from it:
 

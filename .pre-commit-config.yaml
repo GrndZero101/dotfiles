@@ -25,8 +25,8 @@ repos:
       - id: check-added-large-files
       # sesh.toml: a parse error there breaks the prefix + T picker
       - id: check-toml
-      # tmux-raidboss links files to tmux-full's. A rename there would leave
-      # a dangling link that stow happily installs
+      # tmux-raidboss and tmux-quiet link files to tmux-full's. A rename
+      # there would leave a dangling link that stow happily installs
       - id: check-symlinks
       # Git on Windows (core.symlinks=false) checks those links out as text
       # files holding the target path; this stops one being committed back

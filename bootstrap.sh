@@ -86,9 +86,8 @@ if [ -n "$old" ]; then
   stow -D $old
 fi
 
-# tmux-full's and tmux-raidboss's extras are optional (convention 7): warn,
-# don't stop
-if has_pkg tmux-full || has_pkg tmux-raidboss; then
+# The tpm variants' extras are optional (convention 7): warn, don't stop
+if has_pkg tmux-full || has_pkg tmux-raidboss || has_pkg tmux-quiet; then
   if ! have brew; then
     say "note: the tmux picker and status tools come from Homebrew (see Brewfile)"
   elif ! brew bundle check --file Brewfile >/dev/null 2>&1; then
@@ -116,7 +115,7 @@ say "stowing$pkgs"
 stow $pkgs
 
 # Plugins must exist before tmux first starts, or the config errors
-if has_pkg tmux-full || has_pkg tmux-raidboss; then
+if has_pkg tmux-full || has_pkg tmux-raidboss || has_pkg tmux-quiet; then
   tpm="$HOME/.config/tmux/plugins/tpm"
   if [ ! -d "$tpm" ]; then
     say "cloning tpm"

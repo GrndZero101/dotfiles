@@ -49,9 +49,10 @@ tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
 
 Not now: each needs a concrete reason before it moves up.
 
-- **A shared base for `tmux-full` and `tmux-raidboss`.** 45 of tmux-full's
-  47 command lines are also in raidboss. Build one the first time a fix
-  lands in one and not the other. (The zsh pair shares about 60 lines and
+- **A shared base for `tmux-full`, `tmux-raidboss` and `tmux-quiet`.** 45
+  of tmux-full's 47 command lines are also in raidboss, and quiet is
+  tmux-full minus two modules. Build one the first time a fix lands in one
+  and not the others. (The zsh pair shares about 60 lines and
   hasn't drifted.)
 - **CI:** GitHub Actions running `./check.sh` and the container test
   (README, Testing on a fresh box) on Ubuntu and macOS. A CI badge comes
