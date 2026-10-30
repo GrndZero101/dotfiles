@@ -32,7 +32,7 @@ it?" If there's no good answer, it doesn't go in.
 `tmux-minimal` and `zsh-minimal` follow the doctrine with **no exceptions**:
 no plugins, no downloads. The accepted exceptions are `tmux-full` (tpm
 plugins), `tmux-raidboss` (tmux-full plus a HUD of plugin modules, on
-purpose over the top), `tmux-quiet` (tmux-full with fewer status jobs, for
+purpose over the top), `tmux-quiet` (tmux-full without gitmux, for
 endpoint-protected laptops) and `zsh-antidote` (zsh-vi-mode and fzf via
 antidote).
 
@@ -121,6 +121,11 @@ work **alongside** it and never compete.
 - **To see a status line,** attach a client from a second server
   (`tmux -L outer -f /dev/null new -d "tmux -L <name> attach"`) and
   `capture-pane -p` it; `#()` jobs need a few seconds to fill in.
+- **Count process starts, not just CPU.** Endpoint protection scans each
+  one. Read `/proc/sys/kernel/ns_last_pid` before and after a minute and
+  subtract an idle baseline: a status line should add tens a minute, not
+  thousands. A `#()` that exits is re-run every refresh, so anything
+  recurring belongs in a job that keeps running (`sysmon.sh`).
 - **The interactive shell on this workstation is zsh,** which doesn't
   word-split `$var`: pass flag lists as arrays, or test under `sh -c`.
 

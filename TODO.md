@@ -24,26 +24,39 @@ below was built and tested on Linux (WSL) only.
 - [ ] **`sesh-picker.sh` under macOS's bash 3.2.** It uses arrays and
   process substitution, which should work without Homebrew bash.
 
-### Status modules, in `tmux-full` and then `tmux-raidboss`
+### Status modules, in `tmux-full`, `tmux-quiet` and then `tmux-raidboss`
 
 Switch with `./bootstrap.sh tmux-raidboss`, or by hand:
 `tmux kill-server && stow -D tmux-full && stow tmux-raidboss`, then start
 tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
 
-- [ ] **Disk usage (both):** `df -P ~` should report the Data volume
-  (`/System/Volumes/Data`), not the read-only system volume at `/`.
+- [ ] **`sysmon.sh` (all three):** `top -l 0 -s 5 -n 0` must hand awk each
+  sample as it comes through the pipe, and its `CPU usage:` and `PhysMem:`
+  lines must parse. The cpu and ram pills show `?` if `top` is missing.
+- [ ] **Disk usage (all three):** sysmon's `df -P .` from `~` should report
+  the Data volume (`/System/Volumes/Data`), not the read-only system volume
+  at `/`.
 - [ ] **Clock (both):** `%Z` prints a zone name, or an offset for zones
   without one.
 - [ ] **Battery (raidboss):** on a MacBook the pill appears
   (`pmset -g batt` lists `InternalBattery`); on a desktop Mac it's left out.
-- [ ] **Disk IO and net (raidboss):** left out, since there's no `/proc`.
-  Decide whether a macOS version (`iostat`, `netstat -ib`) earns its place
-  in `hud-io.sh`.
+- [ ] **Disk IO and net (all three):** left out, since there's no `/proc`.
+  Decide whether macOS samplers that keep running (`iostat -w`,
+  `netstat -w`) earn a place in `sysmon.sh`.
 - [ ] **GPU (raidboss):** left out without `nvidia-smi`. Apple silicon has
   no cheap GPU-load command, so leaving it out is probably right.
 - [ ] **Load and uptime (raidboss):** catppuccin parses `uptime` output,
   which differs between macOS and Linux.
 - [ ] **Weather, kube and pomodoro (raidboss)** behave as on Linux.
+
+## Upstream
+
+- [ ] **Report the tmux-nerd-font-window-name regression.** Since #68
+  (2026-08-20) the plugin names windows with a bash job per window, about
+  once a second while a pane has output, though its `CONTRIBUTING.md` still
+  says configs without regex sections get the plain format. Our configs
+  build that format with its `generate-tmux-format` after tpm; drop the
+  override once upstream does it again.
 
 ## Parked
 
@@ -54,6 +67,12 @@ Not now: each needs a concrete reason before it moves up.
   tmux-full minus two modules. Build one the first time a fix lands in one
   and not the others. (The zsh pair shares about 60 lines and
   hasn't drifted.)
+- **A tmux variant without the system pills** (cpu, ram, disk, IO, net),
+  keeping everything else, for when even one long-running job is too much.
+- **raidboss's other HUD jobs** (load, uptime, battery, weather, kube,
+  pomodoro) still start about 300 processes a minute, all re-run each
+  refresh. Fine for a box that's over the top on purpose; move them to
+  long-running jobs if that changes.
 - **CI:** GitHub Actions running `./check.sh` and the container test
   (README, Testing on a fresh box) on Ubuntu and macOS. A CI badge comes
   with it.

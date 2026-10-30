@@ -51,8 +51,8 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 
 | Package | What it is | Requires | Safe on shell-config machines |
 |---|---|---|---|
-| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git/cpu/ram/disk-usage status, clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
-| [`tmux-quiet`](tmux-quiet) | `tmux-full` without the git and disk usage pills, refreshing every 15s instead of 5s: fewer process starts and file writes for endpoint protection to scan on corporate laptops | as `tmux-full`, without gitmux | ✅ |
+| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git, cpu, ram and disk usage status (plus disk and network throughput on Linux), clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
+| [`tmux-quiet`](tmux-quiet) | `tmux-full` without the git pill, so the status line starts about two processes a minute for endpoint protection to scan on corporate laptops | as `tmux-full`, without gitmux | ✅ |
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
@@ -73,9 +73,9 @@ config (<kbd>C-Space</kbd> <kbd>R</kbd>) after adding one.
 | left | host, user, directory | nothing |
 | left | Kubernetes context and namespace | `kubectl` with a current context |
 | left | pomodoro timer (empty until started) | nothing |
-| right | cpu, ram, load, disk usage | nothing |
+| right | cpu, ram, load, disk usage | nothing (`vmstat` on Linux, `top` on macOS) |
 | right | GPU load | `nvidia-smi` |
-| right | disk IOPS and throughput, network throughput | Linux (reads `/proc`) |
+| right | disk and network throughput | Linux (reads `/proc`) |
 | right | battery | a battery |
 | right | weather | internet (wttr.in); shows its last value offline |
 | right | uptime | nothing |
@@ -198,6 +198,7 @@ when you ask; nothing updates itself at startup.
 | The repo | re-run the one-liner, or `git -C ~/.config/dotfiles pull` |
 | `brew` package's tools | `brew bundle --file ~/.config/homebrew/Brewfile` (installs and upgrades) |
 | `tmux-full` / `tmux-quiet` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
+| Plugins dropped from the config | <kbd>C-Space</kbd> <kbd>Alt-u</kbd> (tpm removes them) |
 | `zsh-antidote` plugins | `antidote update` |
 | `zsh-antidote`'s fzf binary | `"$(antidote path junegunn/fzf)/install" --bin`, after `antidote update` |
 
@@ -291,7 +292,7 @@ Built on the **Iron Boomer Doctrine**: complexity has to earn its place.
 5. Every package works on a vanilla box, even offline (the tpm variants'
    plugins are the documented exceptions).
 
-Three structural choices follow from it:
+Four structural choices follow from it:
 
 - **One stow package per tool variant**, not one package at the repo root.
   Stow then guarantees that only one variant owns a path, each machine
@@ -302,6 +303,11 @@ Three structural choices follow from it:
   writes into the repo.
 - **No pinning:** plugins track their default branches and update only
   when you ask.
+- **Status pills from one long-running job:** the cpu, ram, disk and
+  network pills all read one `sysmon.sh` that keeps running and prints a
+  line every 5s, instead of commands tmux starts on every refresh. The
+  status line starts about two processes a minute, not thousands, which
+  matters wherever endpoint protection scans every process start.
 
 The full version, with the package conventions, is in
 [`CLAUDE.md`](CLAUDE.md). Open and parked work is in [`TODO.md`](TODO.md).
