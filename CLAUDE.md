@@ -66,7 +66,9 @@ and fzf via antidote).
    both with `tmux-full`'s files.
 
 **Adding a tool:** create `<tool>/` mirroring its path under `~`, add a
-line to the README packages table, run `./check.sh`.
+line to the README packages table, run `./check.sh`. Start one of its files
+with a `# <package>: <what it is>` comment paragraph: `bootstrap.sh
+--pick` shows it as the package's description.
 
 Stow reads `.stowrc` (`--target=~ --no-folding`) from the **current
 directory**, so run stow from the repo root. `--no-folding` keeps
@@ -135,8 +137,9 @@ work **alongside** it and never compete.
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`,
   `test:`), scoped by package where it helps: `feat(tmux-minimal): …`.
 - **Scripts:** POSIX `sh`, `set -eu`, about 100 lines max each
-  (`bootstrap.sh`, about 135 with variant switching, and `sysmon.sh`,
-  about 140 with its awk program, are the accepted exceptions),
+  (`bootstrap.sh`, about 160 with variant switching and the fzf picker,
+  and `sysmon.sh`, about 140 with its awk program, are the accepted
+  exceptions),
   shellcheck clean (`install.sh` with `--shell=sh`), formatted with
   `shfmt --indent=2 --case-indent`. Output is prefixed `dotfiles: `;
   progress to stdout, errors to stderr. Exit 0 means done; non-zero means

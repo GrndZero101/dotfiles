@@ -1,5 +1,6 @@
 #!/bin/sh
 # bootstrap.sh [package]...: stow packages into $HOME on this machine.
+# bootstrap.sh --pick: choose them with fzf instead.
 # With no arguments it installs DEFAULT_PACKAGES. It checks dependencies,
 # refuses unsafe combinations, backs up conflicting files, then stows.
 # Naming another variant of an installed tool switches to it.
@@ -24,6 +25,30 @@ stowed() {
   case $(readlink "$HOME/${f#./}" 2>/dev/null) in */"$1/${f#./}") return 0 ;; esac
   return 1
 }
+
+# --pick only chooses the arguments; everything after runs as if they'd
+# been typed, and the command is printed so it can be typed next time.
+# Each package's "# <package>: ..." header comment is its description
+if [ "${1:-}" = --pick ]; then
+  [ $# -eq 1 ] || die "--pick chooses the packages; don't name any"
+  all=$(for d in */; do [ "$d" = test/ ] || printf '%s ' "${d%/}"; done)
+  { have fzf && [ -t 1 ]; } ||
+    die "--pick needs fzf and a terminal. Name packages instead, ./bootstrap.sh <package>..., from: $all"
+  # The preview is expanded later, by the sh that fzf runs it in
+  # shellcheck disable=SC2016
+  preview='p={1}; f=$(grep -rl "^# $p: " "$p" | head -n 1)
+    [ -z "$f" ] || sed -n "/^# $p: /,/^#\{0,1\}$/s/^# //p" "$f"
+    echo; echo "links into ~:"; cd "$p" && find . -type f -o -type l | sed "s|^\./|  ~/|"'
+  picked=$(for p in $all; do
+    if stowed "$p"; then echo "$p ● installed"; else echo "$p"; fi
+  done | SHELL=/bin/sh fzf --multi --reverse --prompt 'packages> ' \
+    --header 'Tab: pick more   Enter: install   Esc: cancel' \
+    --preview-window wrap --preview "$preview" | cut -d' ' -f1)
+  if [ -z "$picked" ]; then say "nothing picked; nothing changed" && exit 0; fi
+  # shellcheck disable=SC2086 # picked is a list of names, split on purpose
+  set -- $picked
+  say "running ./bootstrap.sh $*"
+fi
 
 # No arguments means the defaults, but a variant that's already installed
 # stays: re-running the installer to update mustn't switch you back

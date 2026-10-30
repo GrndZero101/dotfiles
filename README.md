@@ -14,6 +14,9 @@ curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.s
 # choose packages (everything after `--` goes to bootstrap.sh):
 curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh -s -- zsh-antidote tmux-minimal
 
+# or pick them from a list, if fzf is installed:
+curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh -s -- --pick
+
 # no curl? wget works the same:
 wget -qO- https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh
 ```
@@ -119,7 +122,9 @@ Day to day it's plain `stow`, run from the repo root (it reads `.stowrc`):
 `./bootstrap.sh <variant>` does either "Switch" row with checks: it finds the
 variant installed now, refuses while tmux is running (a reload can't unset
 the old config's settings, so tmux must restart), unstows the old variant,
-stows the new one and installs its plugins.
+stows the new one and installs its plugins. `./bootstrap.sh --pick` chooses
+the packages in fzf (<kbd>Tab</kbd> to pick more than one), with each one's
+description and files in a preview, then prints the command it runs.
 
 > [!TIP]
 > Try `tmux-minimal` without installing it. `-L` starts a separate tmux

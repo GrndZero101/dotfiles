@@ -46,13 +46,16 @@ die() {
 usage() {
   cat <<'EOF'
 Usage: install.sh [package]...
+       install.sh --pick
 
 Clones the dotfiles repo (or updates an existing clone), then runs
 bootstrap.sh with the given packages. No packages means bootstrap.sh's
-DEFAULT_PACKAGES, or the variant of it that's already installed.
+DEFAULT_PACKAGES, or the variant of it that's already installed. --pick
+chooses them in an fzf list instead (needs fzf).
 
   curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh
   curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh -s -- zsh-antidote tmux-minimal
+  curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh -s -- --pick
 
 Environment:
   DOTFILES_DIR       where to clone (default: ~/.config/dotfiles)

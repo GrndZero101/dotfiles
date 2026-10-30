@@ -1,7 +1,8 @@
-# Command-line tools for any machine: what shell-config's profiles use
-# (other than dev-fortress), plus classic Unix CLI tools. Generic on purpose:
-# the repo is public, so no casks, App Store, VS Code, winget or language
-# package managers, and nothing tied to one employer, cloud or machine.
+# brew: command-line tools for any machine, from what shell-config's
+# profiles use (other than dev-fortress) plus classic Unix CLI tools.
+# Generic on purpose: the repo is public, so no casks, App Store, VS Code,
+# winget or language package managers, and nothing tied to one employer,
+# cloud or machine.
 #
 # Install or update everything listed:
 #   brew bundle --file ~/.config/homebrew/Brewfile
