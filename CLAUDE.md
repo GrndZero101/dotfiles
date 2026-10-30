@@ -32,9 +32,9 @@ it?" If there's no good answer, it doesn't go in.
 `tmux-minimal` and `zsh-minimal` follow the doctrine with **no exceptions**:
 no plugins, no downloads. The accepted exceptions are `tmux-full` (tpm
 plugins), `tmux-raidboss` (tmux-full plus a HUD of plugin modules, on
-purpose over the top), `tmux-quiet` (tmux-full without gitmux, for
-endpoint-protected laptops) and `zsh-antidote` (zsh-vi-mode and fzf via
-antidote).
+purpose over the top), `tmux-quiet` (tmux-full with only the cpu and ram
+pills, for endpoint-protected laptops) and `zsh-antidote` (zsh-vi-mode
+and fzf via antidote).
 
 ## Package conventions
 
@@ -134,9 +134,10 @@ work **alongside** it and never compete.
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`,
   `test:`), scoped by package where it helps: `feat(tmux-minimal): …`.
 - **Scripts:** POSIX `sh`, `set -eu`, about 100 lines max each
-  (`bootstrap.sh`, about 135 with variant switching, is the accepted
-  exception), shellcheck clean (`install.sh` with `--shell=sh`), formatted
-  with `shfmt --indent=2 --case-indent`. Output is prefixed `dotfiles: `;
+  (`bootstrap.sh`, about 135 with variant switching, and `sysmon.sh`,
+  about 140 with its awk program, are the accepted exceptions),
+  shellcheck clean (`install.sh` with `--shell=sh`), formatted with
+  `shfmt --indent=2 --case-indent`. Output is prefixed `dotfiles: `;
   progress to stdout, errors to stderr. Exit 0 means done; non-zero means
   nothing was half-done. Never use `stow --adopt`.
 - **README:** order is title and tagline, badges (only true ones: MIT now,

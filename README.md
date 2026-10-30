@@ -52,7 +52,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | Package | What it is | Requires | Safe on shell-config machines |
 |---|---|---|---|
 | [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git, cpu, ram and disk usage status (plus disk and network throughput on Linux), clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
-| [`tmux-quiet`](tmux-quiet) | `tmux-full` without the git pill, so the status line starts about two processes a minute for endpoint protection to scan on corporate laptops | as `tmux-full`, without gitmux | ✅ |
+| [`tmux-quiet`](tmux-quiet) | `tmux-full` with only the cpu and ram pills, from one long-running job that starts no processes once it's running: nothing for endpoint protection to scan on corporate laptops | as `tmux-full`, without gitmux | ✅ |
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
@@ -75,7 +75,7 @@ config (<kbd>C-Space</kbd> <kbd>R</kbd>) after adding one.
 | left | pomodoro timer (empty until started) | nothing |
 | right | cpu, ram, load, disk usage | nothing (`vmstat` on Linux, `top` on macOS) |
 | right | GPU load | `nvidia-smi` |
-| right | disk and network throughput | Linux (reads `/proc`) |
+| right | disk bytes and operations per second (read, write), network throughput | Linux (reads `/proc`) |
 | right | battery | a battery |
 | right | weather | internet (wttr.in); shows its last value offline |
 | right | uptime | nothing |

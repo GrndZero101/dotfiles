@@ -33,16 +33,16 @@ tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
 - [ ] **`sysmon.sh` (all three):** `top -l 0 -s 5 -n 0` must hand awk each
   sample as it comes through the pipe, and its `CPU usage:` and `PhysMem:`
   lines must parse. The cpu and ram pills show `?` if `top` is missing.
-- [ ] **Disk usage (all three):** sysmon's `df -P .` from `~` should report
+- [ ] **Disk usage (full and raidboss):** sysmon's `df -P .` from `~` should report
   the Data volume (`/System/Volumes/Data`), not the read-only system volume
   at `/`.
 - [ ] **Clock (both):** `%Z` prints a zone name, or an offset for zones
   without one.
 - [ ] **Battery (raidboss):** on a MacBook the pill appears
   (`pmset -g batt` lists `InternalBattery`); on a desktop Mac it's left out.
-- [ ] **Disk IO and net (all three):** left out, since there's no `/proc`.
-  Decide whether macOS samplers that keep running (`iostat -w`,
-  `netstat -w`) earn a place in `sysmon.sh`.
+- [ ] **Disk IO, IOPS and net (full and raidboss):** left out, since
+  there's no `/proc`. Decide whether macOS samplers that keep running
+  (`iostat -w`, `netstat -w`) earn a place in `sysmon.sh`.
 - [ ] **GPU (raidboss):** left out without `nvidia-smi`. Apple silicon has
   no cheap GPU-load command, so leaving it out is probably right.
 - [ ] **Load and uptime (raidboss):** catppuccin parses `uptime` output,
@@ -64,7 +64,7 @@ Not now: each needs a concrete reason before it moves up.
 
 - **A shared base for `tmux-full`, `tmux-raidboss` and `tmux-quiet`.** 45
   of tmux-full's 47 command lines are also in raidboss, and quiet is
-  tmux-full minus two modules. Build one the first time a fix lands in one
+  tmux-full minus four modules. Build one the first time a fix lands in one
   and not the others. (The zsh pair shares about 60 lines and
   hasn't drifted.)
 - **A tmux variant without the system pills** (cpu, ram, disk, IO, net),
