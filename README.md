@@ -52,6 +52,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | Package | What it is | Requires | Safe on shell-config machines |
 |---|---|---|---|
 | [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git, cpu, ram and disk usage status (plus disk and network throughput on Linux), clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
+| [`tmux-compact`](tmux-compact) | `tmux-full` with one number per throughput pill: total disk bytes, disk operations and network bytes per second (read plus write, down plus up), and the status line at the top | as `tmux-full` | ✅ |
 | [`tmux-quiet`](tmux-quiet) | `tmux-full` with only the cpu and ram pills, from one long-running job that starts no processes once it's running: nothing for endpoint protection to scan on corporate laptops | as `tmux-full`, without gitmux | ✅ |
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
@@ -86,13 +87,15 @@ config (<kbd>C-Space</kbd> <kbd>R</kbd>) after adding one.
 |---|---|
 | Workstation with shell-config | `tmux-full` (the default) |
 | Workstation, everything on screen | `tmux-raidboss` |
+| Workstation, narrower system pills | `tmux-compact` |
 | Corporate laptop with endpoint protection | `tmux-quiet` |
 | Server where you only want tmux | `tmux-minimal` |
 | Fresh container, full comfort | `zsh-antidote tmux-minimal` |
 | Fresh container, nothing downloaded | `zsh-minimal tmux-minimal` |
 
 > [!NOTE]
-> The tpm variants (`tmux-full`, `tmux-quiet`, `tmux-raidboss`) need
+> The tpm variants (`tmux-full`, `tmux-compact`, `tmux-quiet`,
+> `tmux-raidboss`) need
 > **tmux 3.8+** (they use `command-prompt -P`). Older distro tmux (Ubuntu
 > 24.04 ships 3.4) gets `tmux-minimal`, or tmux from Homebrew.
 > `bootstrap.sh` installs their plugins; if you stow one by hand, press
@@ -147,7 +150,7 @@ inner one: <kbd>C-Space</kbd> <kbd>C-Space</kbd> <kbd>c</kbd>.
 | <kbd>C-Space</kbd> <kbd>"</kbd> / <kbd>%</kbd> / <kbd>c</kbd> | split or new window, keeping the current directory |
 | <kbd>v</kbd>, <kbd>y</kbd> in copy mode | vi selection; copy to the system clipboard (OSC 52, works over SSH) |
 
-**`tmux-full`, `tmux-quiet` and `tmux-raidboss`**
+**`tmux-full`, `tmux-compact`, `tmux-quiet` and `tmux-raidboss`**
 
 | Keys | Action |
 |---|---|
@@ -197,7 +200,7 @@ when you ask; nothing updates itself at startup.
 |---|---|
 | The repo | re-run the one-liner, or `git -C ~/.config/dotfiles pull` |
 | `brew` package's tools | `brew bundle --file ~/.config/homebrew/Brewfile` (installs and upgrades) |
-| `tmux-full` / `tmux-quiet` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
+| `tmux-full` / `tmux-compact` / `tmux-quiet` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
 | Plugins dropped from the config | <kbd>C-Space</kbd> <kbd>Alt-u</kbd> (tpm removes them) |
 | `zsh-antidote` plugins | `antidote update` |
 | `zsh-antidote`'s fzf binary | `"$(antidote path junegunn/fzf)/install" --bin`, after `antidote update` |

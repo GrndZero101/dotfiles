@@ -24,23 +24,23 @@ below was built and tested on Linux (WSL) only.
 - [ ] **`sesh-picker.sh` under macOS's bash 3.2.** It uses arrays and
   process substitution, which should work without Homebrew bash.
 
-### Status modules, in `tmux-full`, `tmux-quiet` and then `tmux-raidboss`
+### Status modules, in the four tpm variants
 
 Switch with `./bootstrap.sh tmux-raidboss`, or by hand:
 `tmux kill-server && stow -D tmux-full && stow tmux-raidboss`, then start
 tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
 
-- [ ] **`sysmon.sh` (all three):** `top -l 0 -s 5 -n 0` must hand awk each
+- [ ] **`sysmon.sh` (all four):** `top -l 0 -s 5 -n 0` must hand awk each
   sample as it comes through the pipe, and its `CPU usage:` and `PhysMem:`
   lines must parse. The cpu and ram pills show `?` if `top` is missing.
-- [ ] **Disk usage (full and raidboss):** sysmon's `df -P .` from `~` should report
-  the Data volume (`/System/Volumes/Data`), not the read-only system volume
-  at `/`.
-- [ ] **Clock (both):** `%Z` prints a zone name, or an offset for zones
+- [ ] **Disk usage (all but quiet):** sysmon's `df -P .` from `~` should
+  report the Data volume (`/System/Volumes/Data`), not the read-only
+  system volume at `/`.
+- [ ] **Clock (all four):** `%Z` prints a zone name, or an offset for zones
   without one.
 - [ ] **Battery (raidboss):** on a MacBook the pill appears
   (`pmset -g batt` lists `InternalBattery`); on a desktop Mac it's left out.
-- [ ] **Disk IO, IOPS and net (full and raidboss):** left out, since
+- [ ] **Disk IO, IOPS and net (all but quiet):** left out, since
   there's no `/proc`. Decide whether macOS samplers that keep running
   (`iostat -w`, `netstat -w`) earn a place in `sysmon.sh`.
 - [ ] **GPU (raidboss):** left out without `nvidia-smi`. Apple silicon has
@@ -62,11 +62,12 @@ tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
 
 Not now: each needs a concrete reason before it moves up.
 
-- **A shared base for `tmux-full`, `tmux-raidboss` and `tmux-quiet`.** 45
-  of tmux-full's 47 command lines are also in raidboss, and quiet is
-  tmux-full minus four modules. Build one the first time a fix lands in one
-  and not the others. (The zsh pair shares about 60 lines and
-  hasn't drifted.)
+- **A shared base for `tmux-full`, `tmux-raidboss`, `tmux-compact` and
+  `tmux-quiet`.** 45 of tmux-full's 47 command lines are also in raidboss,
+  quiet is tmux-full minus four modules, and compact is tmux-full with
+  other throughput fields, an IOPS pill and the status line on top. Build
+  one the first time a fix lands in one and not the others. (The zsh pair
+  shares about 60 lines and hasn't drifted.)
 - **A tmux variant without the system pills** (cpu, ram, disk, IO, net),
   keeping everything else, for when even one long-running job is too much.
 - **raidboss's other HUD jobs** (load, uptime, battery, weather, kube,
