@@ -48,8 +48,8 @@ usage() {
 Usage: install.sh [package]...
 
 Clones the dotfiles repo (or updates an existing clone), then runs
-bootstrap.sh with the given packages. No packages means the default,
-tmux-full.
+bootstrap.sh with the given packages. No packages means bootstrap.sh's
+DEFAULT_PACKAGES, or the variant of it that's already installed.
 
   curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh
   curl -fsSL https://raw.githubusercontent.com/GrndZero101/dotfiles/main/install.sh | sh -s -- zsh-antidote tmux-minimal

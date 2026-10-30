@@ -4,7 +4,7 @@
 # refuses unsafe combinations, backs up conflicting files, then stows.
 # Naming another variant of an installed tool switches to it.
 # It never runs sudo or writes outside $HOME: it prints install hints instead.
-DEFAULT_PACKAGES="tmux-full" # change this one line to change the default
+DEFAULT_PACKAGES="tmux-full" # the default; the README's tables name it too
 
 set -eu
 cd "$(dirname "$0")"
@@ -15,10 +15,6 @@ die() {
   exit 1
 }
 have() { command -v "$1" >/dev/null 2>&1; }
-has_pkg() {
-  case " $pkgs " in *" $1 "*) return 0 ;; esac
-  return 1
-}
 
 # A package is installed if one of its files links into it. With
 # --no-folding each file is its own link, so the first one found will do
@@ -44,8 +40,10 @@ case $(uname -s) in
 esac
 
 # Validate names, allow one variant per tool, collect what's needed, and
-# find any other variant installed now (old): naming one switches from it
-pkgs="" tools="" old="" needs="stow git"
+# find any other variant installed now (old): naming one switches from it.
+# A tmux variant that declares tpm needs its plugins (tpm); asking the
+# config means a new variant needs no edit here
+pkgs="" tools="" old="" needs="stow git" tpm="" zsh=""
 for p in "$@"; do
   p=${p%/}
   { [ -d "$p" ] && [ "$p" != test ]; } || die "unknown package: $p"
@@ -56,8 +54,11 @@ for p in "$@"; do
   pkgs="$pkgs $p" tools="$tools $tool"
   for v in "$tool"-*; do [ "$v" = "$p" ] || ! stowed "$v" || old="$old $v"; done
   case $p in
-    tmux-*) needs="$needs tmux" ;;
-    zsh-*) needs="$needs zsh" ;;
+    tmux-*)
+      needs="$needs tmux"
+      if grep -q "@plugin 'tmux-plugins/tpm'" "$p/.config/tmux/tmux.conf"; then tpm=1; fi
+      ;;
+    zsh-*) needs="$needs zsh" zsh=1 ;;
   esac
 done
 
@@ -67,7 +68,7 @@ for c in $needs; do have "$c" || missing="$missing $c"; done
 
 # On a shell-config machine ~/.zshenv sets ZDOTDIR, so a stowed ~/.zshrc
 # would be silently ignored
-if has_pkg zsh-minimal || has_pkg zsh-antidote; then
+if [ -n "$zsh" ]; then
   [ ! -e "$HOME/.zshenv" ] ||
     die "$HOME/.zshenv exists (shell-config?), so zsh would ignore ~/.zshrc. zsh-* packages are for fresh boxes and containers."
 fi
@@ -87,7 +88,7 @@ if [ -n "$old" ]; then
 fi
 
 # The tpm variants' extras are optional (convention 7): warn, don't stop
-if has_pkg tmux-full || has_pkg tmux-compact || has_pkg tmux-quiet || has_pkg tmux-raidboss; then
+if [ -n "$tpm" ]; then
   if ! have brew; then
     say "note: the tmux picker and status tools come from Homebrew (see Brewfile)"
   elif ! brew bundle check --file Brewfile >/dev/null 2>&1; then
@@ -115,7 +116,7 @@ say "stowing$pkgs"
 stow $pkgs
 
 # Plugins must exist before tmux first starts, or the config errors
-if has_pkg tmux-full || has_pkg tmux-compact || has_pkg tmux-quiet || has_pkg tmux-raidboss; then
+if [ -n "$tpm" ]; then
   tpm="$HOME/.config/tmux/plugins/tpm"
   if [ ! -d "$tpm" ]; then
     say "cloning tpm"
@@ -125,7 +126,7 @@ if has_pkg tmux-full || has_pkg tmux-compact || has_pkg tmux-quiet || has_pkg tm
   "$tpm/bin/install_plugins" || die "tmux plugin install failed; rerun, or press prefix + I in tmux"
 fi
 
-if has_pkg zsh-minimal || has_pkg zsh-antidote; then
+if [ -n "$zsh" ]; then
   case ${SHELL:-} in
     */zsh) ;;
     *) say "next: make zsh your login shell with: chsh -s $(command -v zsh)" ;;
