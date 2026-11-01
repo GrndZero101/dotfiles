@@ -1,0 +1,1 @@
+../../../../tmux-full/.config/tmux/scripts/gitmon.sh

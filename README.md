@@ -311,11 +311,15 @@ Four structural choices follow from it:
   writes into the repo.
 - **No pinning:** plugins track their default branches and update only
   when you ask.
-- **Status pills from one long-running job:** the cpu, ram, disk and
+- **Status pills from long-running jobs:** the cpu, ram, disk and
   network pills all read one `sysmon.sh` that keeps running and prints a
-  line every 5s, instead of commands tmux starts on every refresh. The
-  status line starts about two processes a minute, not thousands, which
-  matters wherever endpoint protection scans every process start.
+  line every 5s, instead of commands tmux starts on every refresh. The git
+  pill comes from `gitmon.sh`, which runs gitmux only when something
+  changes: a pane's directory or command, or (with fswatch) a file in the
+  repo. Idle, the status line starts about two processes a minute, not
+  thousands, which matters wherever endpoint protection scans every
+  process start. Without fswatch, file edits show at the next minute or
+  the next `cd`.
 
 The full version, with the package conventions, is in
 [`CLAUDE.md`](CLAUDE.md). Open and parked work is in [`TODO.md`](TODO.md).

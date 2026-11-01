@@ -128,7 +128,8 @@ work **alongside** it and never compete.
   one. Read `/proc/sys/kernel/ns_last_pid` before and after a minute and
   subtract an idle baseline: a status line should add tens a minute, not
   thousands. A `#()` that exits is re-run every refresh, so anything
-  recurring belongs in a job that keeps running (`sysmon.sh`).
+  recurring belongs in a job that keeps running (`sysmon.sh`), or that
+  waits for events (`gitmon.sh`).
 - **The interactive shell on this workstation is zsh,** which doesn't
   word-split `$var`: pass flag lists as arrays, or test under `sh -c`.
 
@@ -139,7 +140,7 @@ work **alongside** it and never compete.
 - **Scripts:** POSIX `sh`, `set -eu`, about 100 lines each; one that
   needs more for real functionality may grow to 250, no further
   (`bootstrap.sh` is about 160 with variant switching and the fzf picker,
-  `sysmon.sh` about 175 with its awk program),
+  `sysmon.sh` about 175 with its awk program, `gitmon.sh` about 140),
   shellcheck clean (`install.sh` with `--shell=sh`), formatted with
   `shfmt --indent=2 --case-indent`. Output is prefixed `dotfiles: `;
   progress to stdout, errors to stderr. Exit 0 means done; non-zero means

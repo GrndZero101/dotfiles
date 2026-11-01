@@ -49,6 +49,16 @@ tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
   which differs between macOS and Linux.
 - [ ] **Weather, kube and pomodoro (raidboss)** behave as on Linux.
 
+## gitmon on Linux
+
+Built and tested on macOS only (2026-11-01).
+
+- [ ] **`gitmon.sh` with Homebrew's fswatch on Linux and WSL:** fswatch's
+  inotify monitor reports edits, new and deleted files, and `.git`
+  changes, batched (`--batch-marker`), and mawk reads the event FIFO a
+  line at a time. On WSL, a repo under `/mnt/c` likely gets no inotify
+  events, so it would only refresh on `cd` and slow commands.
+
 ## Upstream
 
 - [ ] **Report the tmux-nerd-font-window-name regression.** Since #68

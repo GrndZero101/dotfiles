@@ -10,4 +10,5 @@ brew "fzf"    # the picker's UI
 brew "fd"     # the picker's directory search
 brew "zoxide" # the picker's frequent directories
 brew "gitmux" # git status in the status line
+brew "fswatch" # refreshes it when a file in the repo changes
 brew "eza"    # directory preview in sesh's default session
