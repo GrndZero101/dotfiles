@@ -54,7 +54,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 
 | Package | What it is | Requires | Safe on shell-config machines |
 |---|---|---|---|
-| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git, cpu, ram and disk usage status (plus disk and network throughput on Linux), clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
+| [`tmux-full`](tmux-full) | **Default.** tmux with plugins (tpm): catppuccin theme, sesh session picker and its sesh config, vim-aware pane navigation, git, cpu, ram, disk usage, disk and network throughput status, clock with time zone | tmux 3.8+; extras via Homebrew ([`Brewfile`](Brewfile)) | ✅ |
 | [`tmux-compact`](tmux-compact) | `tmux-full` with one number per throughput pill: total disk bytes, disk operations and network bytes per second (read plus write, down plus up), and the status line at the top | as `tmux-full` | ✅ |
 | [`tmux-quiet`](tmux-quiet) | `tmux-full` with only the cpu and ram pills, from one long-running job that starts no processes once it's running: nothing for endpoint protection to scan on corporate laptops | as `tmux-full`, without gitmux | ✅ |
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
@@ -77,9 +77,9 @@ config (<kbd>C-Space</kbd> <kbd>R</kbd>) after adding one.
 | left | host, user, directory | nothing |
 | left | Kubernetes context and namespace | `kubectl` with a current context |
 | left | pomodoro timer (empty until started) | nothing |
-| right | cpu, ram, load, disk usage | nothing (`vmstat` on Linux, `top` on macOS) |
+| right | cpu, ram, load, disk usage | nothing (`vmstat` on Linux, `top` and `vm_stat` on macOS) |
 | right | GPU load | `nvidia-smi` |
-| right | disk bytes and operations per second (read, write), network throughput | Linux (reads `/proc`) |
+| right | disk bytes and operations per second (read, write), network throughput | nothing (`/proc` on Linux, `top` on macOS, which counts loopback traffic too) |
 | right | battery | a battery |
 | right | weather | internet (wttr.in); shows its last value offline |
 | right | uptime | nothing |

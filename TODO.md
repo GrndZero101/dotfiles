@@ -40,9 +40,9 @@ tmux and press <kbd>C-Space</kbd> <kbd>I</kbd>.
   without one.
 - [ ] **Battery (raidboss):** on a MacBook the pill appears
   (`pmset -g batt` lists `InternalBattery`); on a desktop Mac it's left out.
-- [ ] **Disk IO, IOPS and net (all but quiet):** left out, since
-  there's no `/proc`. Decide whether macOS samplers that keep running
-  (`iostat -w`, `netstat -w`) earn a place in `sysmon.sh`.
+- [x] **Disk IO, IOPS and net (all but quiet):** `sysmon.sh` reads them
+  from the `top` it already runs (`-d`, per-sample counts); checked with a
+  2 GB write and a 100 MB download (2026-11-01). Network includes lo0.
 - [ ] **GPU (raidboss):** left out without `nvidia-smi`. Apple silicon has
   no cheap GPU-load command, so leaving it out is probably right.
 - [ ] **Load and uptime (raidboss):** catppuccin parses `uptime` output,

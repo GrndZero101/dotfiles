@@ -136,10 +136,10 @@ work **alongside** it and never compete.
 
 - **Commits:** Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`,
   `test:`), scoped by package where it helps: `feat(tmux-minimal): …`.
-- **Scripts:** POSIX `sh`, `set -eu`, about 100 lines max each
-  (`bootstrap.sh`, about 160 with variant switching and the fzf picker,
-  and `sysmon.sh`, about 140 with its awk program, are the accepted
-  exceptions),
+- **Scripts:** POSIX `sh`, `set -eu`, about 100 lines each; one that
+  needs more for real functionality may grow to 250, no further
+  (`bootstrap.sh` is about 160 with variant switching and the fzf picker,
+  `sysmon.sh` about 175 with its awk program),
   shellcheck clean (`install.sh` with `--shell=sh`), formatted with
   `shfmt --indent=2 --case-indent`. Output is prefixed `dotfiles: `;
   progress to stdout, errors to stderr. Exit 0 means done; non-zero means
