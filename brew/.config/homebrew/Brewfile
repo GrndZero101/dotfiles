@@ -48,6 +48,7 @@ brew "git-delta"
 brew "gh"
 brew "neovim"
 brew "lazygit"
+brew "yazi"   # the yazi package
 
 # Platform and this repo
 brew "coreutils" if OS.mac? # GNU tools; Linux already has them

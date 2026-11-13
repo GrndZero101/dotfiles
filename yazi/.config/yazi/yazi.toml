@@ -1,0 +1,32 @@
+# yazi: the Yazi file manager with the catppuccin-mocha flavor, git status
+# signs, a full border, the starship prompt in the header, smart-enter on l
+# and jump-to-char on f. Plugins and the flavor come from `ya pkg install`
+# (package.toml), so they never land in the repo
+#
+# Only what differs from the preset (yazi-config/preset/yazi-default.toml);
+# the flavor lives in theme.toml, plugins in package.toml + init.lua, keys in
+# keymap.toml. The same files serve Windows, linked by hand (README), so
+# platform differences are `for = ...` rules here, never separate copies.
+
+# Enter / o on a text file opens the editor in the terminal and waits (block).
+# Defining `edit` replaces the preset's whole list, so unix needs its entry
+# too: the preset's own, with nvim instead of vi when $EDITOR is unset. The
+# preset's Windows entry is VS Code; it stays as the second choice for O.
+[opener]
+edit = [
+	{ run = '${EDITOR:-nvim} %s', desc = "$EDITOR", for = "unix",    block = true },
+	{ run = 'nvim %s',            desc = "nvim",    for = "windows", block = true },
+	{ run = 'code %s',            desc = "code",    for = "windows", orphan = true },
+]
+
+# git.yazi: show git status signs in the file list (plugin installed via package.toml,
+# configured in init.lua). Both rules are what the plugin README asks for.
+[[plugin.prepend_fetchers]]
+url   = "*"
+run   = "git"
+group = "git"
+
+[[plugin.prepend_fetchers]]
+url   = "*/"
+run   = "git"
+group = "git"

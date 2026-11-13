@@ -35,7 +35,7 @@ plugins), `tmux-raidboss` (tmux-full plus a HUD of plugin modules, on
 purpose over the top), `tmux-compact` (tmux-full with totals for the
 throughput pills), `tmux-quiet` (tmux-full with only the cpu and ram
 pills, for endpoint-protected laptops) and `zsh-antidote` (zsh-vi-mode
-and fzf via antidote).
+and fzf via antidote) and `yazi` (plugins and flavor via `ya pkg install`).
 
 ## Package conventions
 
@@ -100,12 +100,17 @@ work **alongside** it and never compete.
 ## Portability
 
 - **Linux and macOS are first-class; WSL counts as Linux.** Native Windows
-  is out of scope (no tmux, no zsh, and stow needs Perl and symlink rights).
+  is out of scope (no tmux, no zsh, and stow needs Perl and symlink rights),
+  with one exception: `yazi`, whose config is the same on every OS. Windows
+  links its `.config/yazi` with a junction (README), not stow, and platform
+  differences are `for = ...` rules inside the files, never a second copy.
 - `tmux-full`, `tmux-raidboss`, `tmux-compact` and `tmux-quiet` get their
   extras from Homebrew on both (`Brewfile`). The minimal and zsh packages
   need only distro packages, so they suit containers.
 - **No pinning, anywhere: always the latest.** tpm plugins, antidote,
-  zsh-vi-mode and fzf track their default branches. Updates are explicit
+  zsh-vi-mode and fzf track their default branches. yazi's `package.toml`
+  records revisions because `ya pkg` requires it; `ya pkg upgrade` moves
+  them, when asked. Updates are explicit
   commands (README, Updating), never automatic at startup.
 - If anything stops relying on brew: Debian/Ubuntu ship `fd` as `fdfind`
   and `bat` as `batcat`.

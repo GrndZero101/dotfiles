@@ -60,10 +60,21 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
+| [`yazi`](yazi) | The Yazi file manager: catppuccin-mocha flavor, git status signs, a full border, the starship prompt in the header, <kbd>l</kbd> enters or opens, <kbd>f</kbd> jumps to a character. Also native Windows, linked by hand (below) | yazi; `ya pkg install` once, online, for its plugins and flavor | ✅ |
 | [`zsh-minimal`](zsh-minimal) | `~/.zshrc` for fresh boxes: history, completion menu, vi mode. No plugins, no downloads | zsh | ❌ fresh boxes and containers only |
 | [`zsh-antidote`](zsh-antidote) | `zsh-minimal` plus zsh-vi-mode and fzf, installed by antidote on first start; works offline | zsh, git; curl or wget for fzf | ❌ fresh boxes and containers only |
 
 Variants of the same tool are alternatives: install exactly one.
+
+`yazi` is the one package that also serves native Windows, where there's
+no stow. Link its directory with a junction, which needs neither admin nor
+Developer Mode, then fetch its plugins; they land in the repo there, and
+`.gitignore` keeps them out of git:
+
+```powershell
+New-Item -ItemType Junction -Path "$env:APPDATA\yazi\config" -Target <repo>\yazi\.config\yazi
+ya pkg install
+```
 
 <details>
 <summary><b>What <code>tmux-raidboss</code>'s HUD line shows, and what each module needs</b></summary>
@@ -208,6 +219,7 @@ when you ask; nothing updates itself at startup.
 | `tmux-full` / `tmux-compact` / `tmux-quiet` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
 | Plugins dropped from the config | <kbd>C-Space</kbd> <kbd>Alt-u</kbd> (tpm removes them) |
 | `zsh-antidote` plugins | `antidote update` |
+| `yazi` plugins and flavor | `ya pkg upgrade`; it records the new revisions in `package.toml`, so commit that |
 | `zsh-antidote`'s fzf binary | `"$(antidote path junegunn/fzf)/install" --bin`, after `antidote update` |
 
 > [!WARNING]
@@ -222,7 +234,8 @@ From the repo root, `stow -D <package>` removes its links. Then:
   `~/.local/state/dotfiles-backup/<timestamp>/`, at their original paths.
   Move back whatever you want.
 - **Safe to delete** (downloaded or generated): `~/.config/tmux/plugins/`,
-  `~/.cache/zsh/`, `~/.cache/antidote/`, `~/.local/share/antidote/`.
+  `~/.config/yazi/plugins/`, `~/.config/yazi/flavors/`, `~/.cache/zsh/`,
+  `~/.cache/antidote/`, `~/.local/share/antidote/`.
 - **Your zsh history** is in `~/.local/state/zsh/history`. Keep it, or not.
 
 ## Coexisting with shell-config
@@ -298,7 +311,7 @@ Built on the **Iron Boomer Doctrine**: complexity has to earn its place.
 3. Plain tools used directly: `stow`, not a wrapper.
 4. Fail loudly, not cleverly.
 5. Every package works on a vanilla box, even offline (the tpm variants'
-   plugins are the documented exceptions).
+   plugins and yazi's are the documented exceptions).
 
 Four structural choices follow from it:
 

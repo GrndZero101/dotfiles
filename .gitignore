@@ -2,3 +2,8 @@
 # that is a real directory, but stow run without .stowrc folds the directory
 # into the repo, and tpm would then write third-party code here.
 plugins/
+
+# ya pkg install writes yazi's plugins and flavors next to its config. On
+# Windows that directory is a junction into the repo (README), so both land
+# here (plugins/ is covered above).
+flavors/
