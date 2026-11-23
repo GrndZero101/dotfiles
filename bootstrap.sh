@@ -68,7 +68,7 @@ esac
 # find any other variant installed now (old): naming one switches from it.
 # A tmux variant that declares tpm needs its plugins (tpm); asking the
 # config means a new variant needs no edit here
-pkgs="" tools="" old="" needs="stow git" tpm="" zsh=""
+pkgs="" tools="" old="" needs="stow git" tpm="" zsh="" yazi=""
 for p in "$@"; do
   p=${p%/}
   { [ -d "$p" ] && [ "$p" != test ]; } || die "unknown package: $p"
@@ -84,6 +84,7 @@ for p in "$@"; do
       if grep -q "@plugin 'tmux-plugins/tpm'" "$p/.config/tmux/tmux.conf"; then tpm=1; fi
       ;;
     zsh-*) needs="$needs zsh" zsh=1 ;;
+    yazi) needs="$needs yazi ya" yazi=1 ;;
   esac
 done
 
@@ -149,6 +150,13 @@ if [ -n "$tpm" ]; then
   fi
   say "installing tmux plugins"
   "$tpm/bin/install_plugins" || die "tmux plugin install failed; rerun, or press prefix + I in tmux"
+fi
+
+# Yazi starts without its plugins and flavor (init.lua guards them), but
+# plain: fetch them now rather than leave a second manual step
+if [ -n "$yazi" ]; then
+  say "installing yazi plugins and flavor"
+  ya pkg install || die "yazi plugin install failed; rerun, or run: ya pkg install"
 fi
 
 if [ -n "$zsh" ]; then

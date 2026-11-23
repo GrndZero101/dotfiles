@@ -60,7 +60,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
-| [`yazi`](yazi) | The Yazi file manager: catppuccin-mocha flavor, git status signs, a full border, the starship prompt in the header, <kbd>l</kbd> enters or opens, <kbd>f</kbd> jumps to a character. Also native Windows, linked by hand (below) | yazi; `ya pkg install` once, online, for its plugins and flavor | ✅ |
+| [`yazi`](yazi) | The Yazi file manager: catppuccin-mocha flavor, git status signs, a full border, the starship prompt in the header, <kbd>l</kbd> enters or opens, <kbd>f</kbd> jumps to a character. Also native Windows, linked by hand (below) | yazi; its plugins and flavor come from `ya pkg install` (online), which `bootstrap.sh` runs. Without them Yazi still starts, plain | ✅ |
 | [`zsh-minimal`](zsh-minimal) | `~/.zshrc` for fresh boxes: history, completion menu, vi mode. No plugins, no downloads | zsh | ❌ fresh boxes and containers only |
 | [`zsh-antidote`](zsh-antidote) | `zsh-minimal` plus zsh-vi-mode and fzf, installed by antidote on first start; works offline | zsh, git; curl or wget for fzf | ❌ fresh boxes and containers only |
 
