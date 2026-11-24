@@ -88,6 +88,11 @@ for p in "$@"; do
   esac
 done
 
+# A yazi stowed on an earlier run gets its plugins too: a pull may have
+# changed package.toml, and a host stowed before this step existed (or with
+# plain stow) has none, so yazi.toml's git fetchers fail on every folder
+if [ -z "$yazi" ] && stowed yazi; then needs="$needs ya" yazi=1; fi
+
 missing=""
 for c in $needs; do have "$c" || missing="$missing $c"; done
 [ -z "$missing" ] || die "missing:$missing. Install with: $hint$missing"
@@ -152,8 +157,9 @@ if [ -n "$tpm" ]; then
   "$tpm/bin/install_plugins" || die "tmux plugin install failed; rerun, or press prefix + I in tmux"
 fi
 
-# Yazi starts without its plugins and flavor (init.lua guards them), but
-# plain: fetch them now rather than leave a second manual step
+# Yazi starts without its plugins and flavor (init.lua guards their setup),
+# but plain, and its task list fills with failed git fetches: fetch them now
+# rather than leave a second manual step. It installs package.toml's revisions
 if [ -n "$yazi" ]; then
   say "installing yazi plugins and flavor"
   ya pkg install || die "yazi plugin install failed; rerun, or run: ya pkg install"
