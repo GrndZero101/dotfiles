@@ -9,10 +9,12 @@ for  = "unix"
 run  = 'shell "$SHELL" --block'
 desc = "Open $SHELL here"
 
+# pwsh.exe, not upstream's powershell.exe: win-config's profile is PowerShell
+# 7 only, and 5.1 would open bare, without it.
 [[mgr.prepend_keymap]]
 on   = "!"
 for  = "windows"
-run  = 'shell "powershell.exe" --block'
+run  = 'shell "pwsh.exe" --block'
 desc = "Open PowerShell here"
 
 # smart-enter.yazi: l enters a directory or opens a file (preset: enter only).
