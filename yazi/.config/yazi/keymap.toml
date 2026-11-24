@@ -1,5 +1,14 @@
 # Keymap additions. prepend_keymap entries win over the preset for the same key.
 
+# ! opens a shell here, from Yazi's "Dropping to the shell" tip; the preset
+# has no such key. Yazi sets YAZI_ID and YAZI_LEVEL in it, which shell
+# integrations (cd back to Yazi on exit, a prompt marker) look for.
+[[mgr.prepend_keymap]]
+on   = "!"
+for  = "unix"
+run  = 'shell "$SHELL" --block'
+desc = "Open $SHELL here"
+
 [[mgr.prepend_keymap]]
 on   = "!"
 for  = "windows"
