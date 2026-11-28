@@ -159,10 +159,13 @@ fi
 
 # Yazi starts without its plugins and flavor (init.lua guards their setup),
 # but plain, and its task list fills with failed git fetches: fetch them now
-# rather than leave a second manual step. It installs package.toml's revisions
+# rather than leave a second manual step. It installs package.toml's revisions.
+# --discard: after a pull brings a new hash, ya mistakes the old download
+# for a local edit and aborts. Plugins are ya's downloads, never edited
+# here, so a mismatch only ever means a stale copy.
 if [ -n "$yazi" ]; then
   say "installing yazi plugins and flavor"
-  ya pkg install || die "yazi plugin install failed; rerun, or run: ya pkg install"
+  ya pkg install --discard || die "yazi plugin install failed; rerun, or run: ya pkg install --discard"
 fi
 
 if [ -n "$zsh" ]; then

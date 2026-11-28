@@ -219,7 +219,7 @@ when you ask; nothing updates itself at startup.
 | `tmux-full` / `tmux-compact` / `tmux-quiet` / `tmux-raidboss` plugins | <kbd>C-Space</kbd> <kbd>U</kbd>, then type `all` and press <kbd>Enter</kbd> |
 | Plugins dropped from the config | <kbd>C-Space</kbd> <kbd>Alt-u</kbd> (tpm removes them) |
 | `zsh-antidote` plugins | `antidote update` |
-| `yazi` plugins and flavor | `ya pkg upgrade`; it records the new revisions in `package.toml`, so commit that. Other hosts get them from the one-liner, or `ya pkg install` after a pull |
+| `yazi` plugins and flavor | `ya pkg upgrade`; it records the new revisions in `package.toml`, so commit that. Other hosts get them from the one-liner, or `ya pkg install --discard` after a pull (without `--discard`, ya takes the old download for a local edit and stops) |
 | `zsh-antidote`'s fzf binary | `"$(antidote path junegunn/fzf)/install" --bin`, after `antidote update` |
 
 > [!WARNING]
