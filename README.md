@@ -61,6 +61,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
 | [`git`](git) | `~/.config/git/config` for every repo: new repos on `main`, delta as the pager with catppuccin-mocha (plain `less` without delta), zdiff3 conflict markers, rerere to reapply resolved conflicts, rebases that autosquash fixups, autostash and update stacked branches, pull that only fast-forwards, the diff in the commit editor, moved lines coloured, pruning on fetch, upstream and tags set on push, typo prompts, `git lg`/`lg1`/`lg2`/`lg3` branch graphs and `git pushf` (force with lease). No identity or credentials: those stay in `~/.gitconfig`, which wins over this file line by line, so one machine can override any setting there | the latest git; delta optional (both in the [`Brewfile`](Brewfile)) | ✅ |
+| [`lazygit`](lazygit) | The lazygit terminal UI: catppuccin-mocha theme, Nerd Font icons, and diffs through delta (in the `git` package's catppuccin theme when that's stowed; git's plain diff without delta). macOS needs a one-time link (below) | lazygit; a Nerd Font (v3) in the terminal; delta optional (all but the font in the [`Brewfile`](Brewfile)) | ✅ |
 | [`yazi`](yazi) | The Yazi file manager: catppuccin-mocha flavor, git status signs, a full border, the starship prompt in the header, <kbd>l</kbd> enters or opens, <kbd>f</kbd> jumps to a character. Also native Windows, linked by hand (below) | yazi; its plugins and flavor come from `ya pkg install` (online), which `bootstrap.sh` runs whenever yazi is stowed, re-runs included. Without them Yazi still starts, plain, but its task list fills with failed `git` fetches | ✅ |
 | [`zsh-minimal`](zsh-minimal) | `~/.zshrc` for fresh boxes: history, completion menu, vi mode. No plugins, no downloads | zsh | ❌ fresh boxes and containers only |
 | [`zsh-antidote`](zsh-antidote) | `zsh-minimal` plus zsh-vi-mode and fzf, installed by antidote on first start; works offline | zsh, git; curl or wget for fzf | ❌ fresh boxes and containers only |
@@ -75,6 +76,16 @@ Developer Mode, then fetch its plugins; they land in the repo there, and
 ```powershell
 New-Item -ItemType Junction -Path "$env:APPDATA\yazi\config" -Target <repo>\yazi\.config\yazi
 ya pkg install
+```
+
+On macOS, lazygit reads `~/Library/Application Support/lazygit/` rather
+than `~/.config/lazygit/` (unless `XDG_CONFIG_HOME` is set). After
+`stow lazygit`, link the config file there once. Only the file, so
+lazygit's own `state.yml` stays in `Library`:
+
+```sh
+mkdir -p ~/Library/Application\ Support/lazygit
+ln -s ~/.config/lazygit/config.yml ~/Library/Application\ Support/lazygit/config.yml
 ```
 
 <details>
@@ -235,9 +246,12 @@ From the repo root, `stow -D <package>` removes its links. Then:
 - **Backups** of files that were in the way are in
   `~/.local/state/dotfiles-backup/<timestamp>/`, at their original paths.
   Move back whatever you want.
+- **On macOS**, after `stow -D lazygit`, delete the link in
+  `~/Library/Application Support/lazygit/config.yml`.
 - **Safe to delete** (downloaded or generated): `~/.config/tmux/plugins/`,
-  `~/.config/yazi/plugins/`, `~/.config/yazi/flavors/`, `~/.cache/zsh/`,
-  `~/.cache/antidote/`, `~/.local/share/antidote/`.
+  `~/.config/yazi/plugins/`, `~/.config/yazi/flavors/`,
+  `~/.config/lazygit/state.yml`, `~/.cache/zsh/`, `~/.cache/antidote/`,
+  `~/.local/share/antidote/`.
 - **Your zsh history** is in `~/.local/state/zsh/history`. Keep it, or not.
 
 ## Coexisting with shell-config
