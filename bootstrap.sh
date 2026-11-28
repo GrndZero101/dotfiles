@@ -163,9 +163,17 @@ fi
 # --discard: after a pull brings a new hash, ya mistakes the old download
 # for a local edit and aborts. Plugins are ya's downloads, never edited
 # here, so a mismatch only ever means a stale copy.
+# Its output is shown only on failure: a good run re-fetches every plugin on
+# every bootstrap and prints a screenful of git chatter that reads like errors
 if [ -n "$yazi" ]; then
   say "installing yazi plugins and flavor"
-  ya pkg install --discard || die "yazi plugin install failed; rerun, or run: ya pkg install --discard"
+  log=$(mktemp)
+  if ! ya pkg install --discard >"$log" 2>&1; then
+    cat "$log" >&2
+    rm -f "$log"
+    die "yazi plugin install failed; rerun, or run: ya pkg install --discard"
+  fi
+  rm -f "$log"
 fi
 
 # With no ~/.gitconfig, `git config --global` writes to ~/.config/git/config,
