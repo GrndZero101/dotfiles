@@ -1,5 +1,5 @@
 #!/bin/sh
-# check.sh: validate the repo. Parses every tmux and zsh config, lints the
+# check.sh: validate the repo. Parses every tmux, zsh and git config, lints the
 # shell scripts and dry-runs stow for every package. Read-only: nothing is
 # installed or linked. Exits non-zero if anything fails.
 set -eu
@@ -38,6 +38,15 @@ if have zsh; then
   done
 else
   warn "zsh not installed; zsh configs not checked"
+fi
+
+# git: parse the file alone, so this machine's own config isn't involved
+if have git; then
+  for f in */.config/git/config; do
+    if git config -f "$f" --list >/dev/null; then ok "$f"; else fail "$f"; fi
+  done
+else
+  warn "git not installed; git config not checked"
 fi
 
 # Scripts: shellcheck picks sh or bash from each shebang

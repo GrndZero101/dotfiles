@@ -60,6 +60,7 @@ The repo is cloned to `~/.config/dotfiles`. Override it with
 | [`tmux-raidboss`](tmux-raidboss) | `tmux-full` with everything lit up: a second status line of system and environment modules, and a title bar on every pane | as `tmux-full`; optional extras per module (below) | ✅ |
 | [`tmux-minimal`](tmux-minimal) | Pure tmux, no plugins, same muscle memory | tmux 3.2+ | ✅ |
 | [`brew`](brew) | A generic Brewfile at `~/.config/homebrew/Brewfile`: what shell-config's profiles use, plus classic Unix CLI tools. Install with `brew bundle --file ~/.config/homebrew/Brewfile` | Homebrew | ✅ |
+| [`git`](git) | `~/.config/git/config` for every repo: new repos on `main`, delta as the pager with catppuccin-mocha (plain `less` without delta), diff3 conflict markers, moved lines coloured, pruning on fetch, upstream set on first push. No identity or credentials: those stay in `~/.gitconfig`, which wins over this file line by line, so one machine can override any setting there | git; delta optional (in the [`brew`](brew) package) | ✅ |
 | [`yazi`](yazi) | The Yazi file manager: catppuccin-mocha flavor, git status signs, a full border, the starship prompt in the header, <kbd>l</kbd> enters or opens, <kbd>f</kbd> jumps to a character. Also native Windows, linked by hand (below) | yazi; its plugins and flavor come from `ya pkg install` (online), which `bootstrap.sh` runs whenever yazi is stowed, re-runs included. Without them Yazi still starts, plain, but its task list fills with failed `git` fetches | ✅ |
 | [`zsh-minimal`](zsh-minimal) | `~/.zshrc` for fresh boxes: history, completion menu, vi mode. No plugins, no downloads | zsh | ❌ fresh boxes and containers only |
 | [`zsh-antidote`](zsh-antidote) | `zsh-minimal` plus zsh-vi-mode and fzf, installed by antidote on first start; works offline | zsh, git; curl or wget for fzf | ❌ fresh boxes and containers only |
@@ -127,6 +128,7 @@ Day to day it's plain `stow`, run from the repo root (it reads `.stowrc`):
 | Dry run | `stow -n -v tmux-full` |
 | Switch tmux variant | `tmux kill-server && stow -D tmux-full && stow tmux-raidboss`, then start tmux; the first time, press <kbd>C-Space</kbd> <kbd>I</kbd> to install its plugins |
 | Switch zsh variant | `stow -D zsh-minimal && stow zsh-antidote`, then start a new shell |
+| Install `git` | `touch ~/.gitconfig && stow git`. Without a `~/.gitconfig`, `git config --global` writes your name and email into the repo through the link (`bootstrap.sh` creates the empty file for you) |
 | Validate the repo | `./check.sh` |
 | Check every commit | `prek install`, once per clone; `prek run --all-files` runs the hooks by hand |
 

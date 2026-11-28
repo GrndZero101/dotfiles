@@ -1,0 +1,90 @@
+# git: settings for every repo, at git's XDG path ~/.config/git/config.
+# New repos start on main; diffs page through delta with the
+# catppuccin-mocha theme (plain less without delta); and diff, merge,
+# fetch, push and listing get saner defaults.
+#
+# No identity, credentials or aliases: those stay in each machine's
+# ~/.gitconfig, so nothing personal lands in this public repo. Git reads
+# ~/.gitconfig after this file and the last value wins, so one machine can
+# override any line here without touching the repo:
+#   git config --global core.pager less
+# Each section stands alone; delete one to drop that behaviour. Everything
+# works on git 2.34 (Ubuntu 22.04). Newer keys are silently ignored there.
+
+[init]
+	# master otherwise, and git 2.28+ prints a hint on every git init
+	defaultBranch = main
+
+[core]
+	# delta if installed (brew package), else less, else no paging. A plain
+	# `pager = delta` makes every git log fail on a box without delta
+	pager = "if command -v delta >/dev/null 2>&1; then exec delta; elif command -v less >/dev/null 2>&1; then exec less; else exec cat; fi"
+
+[interactive]
+	# Same for git add -p. Without delta, cat passes git's own colours through
+	diffFilter = "if command -v delta >/dev/null 2>&1; then exec delta --color-only; else exec cat; fi"
+
+[delta]
+	# n and N jump between files in a long diff
+	navigate = true
+	features = catppuccin-mocha
+
+[merge]
+	# Conflict markers also show the common ancestor, so you can see what
+	# each side changed. Not zdiff3: git 2.34 dies on it, even on checkout
+	conflictStyle = diff3
+
+[diff]
+	# Moved lines get their own colour instead of reading as delete plus add
+	colorMoved = default
+	# Hunks line up with the code's structure more often than the default
+	algorithm = histogram
+
+[fetch]
+	# Drop remote-tracking branches that are gone on the remote
+	prune = true
+
+[push]
+	# A new branch's first push sets its upstream: no --set-upstream (git 2.37+)
+	autoSetupRemote = true
+
+[branch]
+	# git branch lists the most recently worked-on first
+	sort = -committerdate
+
+[tag]
+	# v1.10 after v1.9, not after v1.1
+	sort = version:refname
+
+# Catppuccin Mocha for delta, from catppuccin/delta (MIT) at commit
+# 011516f5d14f66b771b3e716f29c77231e008c74, mocha section only. Its
+# syntax-theme is one of the bat themes built into delta.
+[delta "catppuccin-mocha"]
+	blame-palette = "#1e1e2e #181825 #11111b #313244 #45475a"
+	commit-decoration-style = "#6c7086" bold box ul
+	dark = true
+	file-decoration-style = "#6c7086"
+	file-style = "#cdd6f4"
+	hunk-header-decoration-style = "#6c7086" box ul
+	hunk-header-file-style = bold
+	hunk-header-line-number-style = bold "#a6adc8"
+	hunk-header-style = file line-number syntax
+	line-numbers-left-style = "#6c7086"
+	line-numbers-minus-style = bold "#f38ba8"
+	line-numbers-plus-style = bold "#a6e3a1"
+	line-numbers-right-style = "#6c7086"
+	line-numbers-zero-style = "#6c7086"
+	# 35% red 65% base
+	minus-emph-style = bold syntax "#694559"
+	# 20% red 80% base
+	minus-style = syntax "#493447"
+	# 35% green 65% base
+	plus-emph-style = bold syntax "#4e6356"
+	# 20% green 80% base
+	plus-style = syntax "#394545"
+	map-styles = \
+		bold purple => syntax "#5b4e74", \
+		bold blue => syntax "#445375", \
+		bold cyan => syntax "#446170", \
+		bold yellow => syntax "#6b635b"
+	syntax-theme = Catppuccin Mocha

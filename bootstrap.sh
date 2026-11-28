@@ -168,6 +168,14 @@ if [ -n "$yazi" ]; then
   ya pkg install --discard || die "yazi plugin install failed; rerun, or run: ya pkg install --discard"
 fi
 
+# With no ~/.gitconfig, `git config --global` writes to ~/.config/git/config,
+# a link into this public repo, so your name and email would land in it.
+# An empty ~/.gitconfig takes those writes instead
+if stowed git && [ ! -e "$HOME/.gitconfig" ]; then
+  say "creating an empty ~/.gitconfig for git config --global to write to"
+  : >"$HOME/.gitconfig"
+fi
+
 if [ -n "$zsh" ]; then
   case ${SHELL:-} in
     */zsh) ;;

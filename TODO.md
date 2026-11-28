@@ -87,10 +87,9 @@ Not now: each needs a concrete reason before it moves up.
 - **CI:** GitHub Actions running `./check.sh` and the container test
   (README, Testing on a fresh box) on Ubuntu and macOS. A CI badge comes
   with it.
-- **More tool packages:** `nvim`, `git`, `bat`. For `git`, this machine's
-  config points `credential.helper` at a Windows `.exe` that fails with
-  "Exec format error" inside WSL: a real bug to fix when it arrives. It
-  would use `~/.config/git/config` (XDG).
+- **More tool packages:** `nvim`, `bat`.
+- **Git aliases** (the `lg` log graphs in this machine's `~/.gitconfig`)
+  could move into the `git` package once a second machine wants them.
 - **More zsh plugins** (autosuggestions, syntax highlighting), in
   `zsh-antidote` only. One line in `.zsh_plugins.txt` each, but each needs
   its own "what does it earn?" and must pass the offline container tests.
