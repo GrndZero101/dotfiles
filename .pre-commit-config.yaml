@@ -5,7 +5,8 @@
 #
 # Added 2026-10-17. Its reasons: ./check.sh only ran when remembered, before
 # a push of six commits; Conventional Commits and "no secrets, the repo is
-# public" were habits, not checks.
+# public" were habits, not checks. gitleaks and check-yaml joined on
+# 2026-11-28, with the git and lazygit packages.
 #
 # NOTE: `repo: builtin` is a prek extension and is NOT understood by plain
 # `pre-commit`. That is the trade for hygiene hooks that clone nothing and
@@ -25,6 +26,8 @@ repos:
       - id: check-added-large-files
       # sesh.toml: a parse error there breaks the prefix + T picker
       - id: check-toml
+      # lazygit's config.yml: a parse error there and lazygit won't start
+      - id: check-yaml
       # tmux-raidboss and tmux-quiet link files to tmux-full's. A rename
       # there would leave a dangling link that stow happily installs
       - id: check-symlinks
@@ -36,7 +39,8 @@ repos:
       - id: check-shebang-scripts-are-executable
       # macOS is first-class and its filesystem is case-insensitive
       - id: check-case-conflict
-      # The repo is public
+      # The repo is public. Catches PEM private keys only; gitleaks (below)
+      # catches tokens
       - id: detect-private-key
       # No no-commit-to-branch: this repo commits to main directly
 
@@ -66,6 +70,17 @@ repos:
     rev: v0.3.0
     hooks:
       - id: rumdl
+
+  # Secrets in the staged changes: tokens and API keys, which
+  # detect-private-key misses. Added with the git package, a file tools
+  # write credentials into (url.*.insteadOf with a token, credential
+  # settings), and one `git config --global` writes into this public repo
+  # through the stow link when ~/.gitconfig doesn't exist. --redact keeps
+  # the secret itself out of the terminal and its scrollback
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
 
   # Enforces the Conventional Commits rule in CLAUDE.md. Its default types
   # include all of CLAUDE.md's, so no args are needed

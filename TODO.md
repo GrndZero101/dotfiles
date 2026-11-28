@@ -88,15 +88,11 @@ Not now: each needs a concrete reason before it moves up.
   (README, Testing on a fresh box) on Ubuntu and macOS. A CI badge comes
   with it.
 - **More tool packages:** `nvim`, `bat`.
-- **Git aliases** (the `lg` log graphs in this machine's `~/.gitconfig`)
-  could move into the `git` package once a second machine wants them.
 - **More zsh plugins** (autosuggestions, syntax highlighting), in
   `zsh-antidote` only. One line in `.zsh_plugins.txt` each, but each needs
   its own "what does it earn?" and must pass the offline container tests.
 - **Machine-local overrides:** `source-file -q ~/.config/tmux/local.conf`
   or `~/.zshrc.local`, when the first machine-specific tweak appears.
-- **gitleaks** in the hooks, if `detect-private-key` and the pre-push
-  review stop being enough.
 - **Popup command prompt:** tmux 3.8's modal-pane prompt works but is
   brittle and nobody else uses it. Revisit when floating panes settle,
   expected around tmux 3.9.
