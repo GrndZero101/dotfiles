@@ -1,16 +1,21 @@
 # git: settings for every repo, at git's XDG path ~/.config/git/config.
 # New repos start on main; diffs page through delta with the
-# catppuccin-mocha theme (plain less without delta); and diff, merge,
-# fetch, push and listing get saner defaults.
+# catppuccin-mocha theme (plain less without delta); conflicts are
+# remembered and reapplied; rebases squash fixups, stash a dirty tree and
+# carry stacked branches along; pull never makes a merge on its own; and
+# diff, merge, fetch, push and listing get saner defaults.
 #
-# Aliases: lg1, lg2 and lg3, a branch graph of every ref at three levels of
-# detail. No identity or credentials: those stay in each machine's
+# Aliases: lg1, lg2 and lg3 (lg for short), a branch graph of every ref at
+# three levels of detail; pushf, a force push that can't clobber commits
+# you haven't seen. No identity or credentials: those stay in each machine's
 # ~/.gitconfig, so nothing personal lands in this public repo. Git reads
 # ~/.gitconfig after this file and the last value wins, so one machine can
 # override any line here without touching the repo:
 #   git config --global core.pager less
-# Each section stands alone; delete one to drop that behaviour. Everything
-# works on git 2.34 (Ubuntu 22.04). Newer keys are silently ignored there.
+# Each section stands alone; delete one to drop that behaviour. Written for
+# the latest git, from Homebrew (repo-root Brewfile). A distro git ignores
+# keys it doesn't know but dies on values it doesn't know: Ubuntu 22.04's
+# 2.34 refuses zdiff3 on any merge or checkout, so take git from brew there.
 
 [init]
 	# master otherwise, and git 2.28+ prints a hint on every git init
@@ -32,8 +37,33 @@
 
 [merge]
 	# Conflict markers also show the common ancestor, so you can see what
-	# each side changed. Not zdiff3: git 2.34 dies on it, even on checkout
-	conflictStyle = diff3
+	# each side changed; zdiff3 moves lines both sides share out of the way
+	conflictStyle = zdiff3
+
+[rerere]
+	# Record how each conflict was resolved and reapply it the next time the
+	# same one appears, as when rebasing a long-lived branch again and again
+	enabled = true
+	# and stage the reapplied resolution, so only new conflicts need you
+	autoUpdate = true
+
+[rebase]
+	# fixup! and squash! commits (git commit --fixup) land on their target
+	# in git rebase -i without moving lines by hand
+	autoSquash = true
+	# A dirty tree is stashed before the rebase and popped after
+	autoStash = true
+	# Branches stacked on the one being rebased move with it
+	updateRefs = true
+
+[pull]
+	# Fast-forward or stop: a diverged branch fails loudly instead of growing
+	# a merge commit. Then choose: git pull --rebase, or git merge
+	ff = only
+
+[commit]
+	# The diff sits under the message in the editor, to write it from
+	verbose = true
 
 [diff]
 	# Moved lines get their own colour instead of reading as delete plus add
@@ -48,6 +78,8 @@
 [push]
 	# A new branch's first push sets its upstream: no --set-upstream (git 2.37+)
 	autoSetupRemote = true
+	# Annotated tags go up with the commits they point at
+	followTags = true
 
 [branch]
 	# git branch lists the most recently worked-on first
@@ -57,6 +89,11 @@
 	# v1.10 after v1.9, not after v1.1
 	sort = version:refname
 
+[help]
+	# A typo like git stauts asks "Run 'status' instead?" rather than
+	# only listing suggestions
+	autoCorrect = prompt
+
 [alias]
 	# The whole history as a graph: one line per commit, then two (with the
 	# date), then three (with author and committer emails). --all includes
@@ -64,6 +101,11 @@
 	lg1 = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
 	lg2 = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
 	lg3 = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset)%C(auto)%d%C(reset)%n          %C(white)%s%C(reset)%n          %C(dim white)- %an <%ae>%C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+	lg = lg1
+	# For after a rebase. --force-with-lease refuses if the remote moved
+	# since you last fetched; --force-if-includes also refuses if you
+	# fetched but never looked at what came in
+	pushf = push --force-with-lease --force-if-includes
 
 # Catppuccin Mocha for delta, from catppuccin/delta (MIT) at commit
 # 011516f5d14f66b771b3e716f29c77231e008c74, mocha section only. Its

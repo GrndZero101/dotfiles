@@ -107,6 +107,9 @@ work **alongside** it and never compete.
 - `tmux-full`, `tmux-raidboss`, `tmux-compact` and `tmux-quiet` get their
   extras from Homebrew on both (`Brewfile`). The minimal and zsh packages
   need only distro packages, so they suit containers.
+- `git` assumes the latest git, from Homebrew (`Brewfile`), with delta
+  optional. A distro git ignores keys it doesn't know but dies on values it
+  doesn't know: 22.04's 2.34 refuses `zdiff3`.
 - **No pinning, anywhere: always the latest.** tpm plugins, antidote,
   zsh-vi-mode and fzf track their default branches. yazi's `package.toml`
   records revisions because `ya pkg` requires it; `ya pkg upgrade` moves
