@@ -53,7 +53,7 @@
 	autoSquash = true
 	# A dirty tree is stashed before the rebase and popped after
 	autoStash = true
-	# Branches stacked on the one being rebased move with it
+	# Rebasing the top branch of a stack also moves the branches under it
 	updateRefs = true
 
 [pull]
