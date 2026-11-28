@@ -3,7 +3,8 @@
 # catppuccin-mocha theme (plain less without delta); and diff, merge,
 # fetch, push and listing get saner defaults.
 #
-# No identity, credentials or aliases: those stay in each machine's
+# Aliases: lg1, lg2 and lg3, a branch graph of every ref at three levels of
+# detail. No identity or credentials: those stay in each machine's
 # ~/.gitconfig, so nothing personal lands in this public repo. Git reads
 # ~/.gitconfig after this file and the last value wins, so one machine can
 # override any line here without touching the repo:
@@ -55,6 +56,14 @@
 [tag]
 	# v1.10 after v1.9, not after v1.1
 	sort = version:refname
+
+[alias]
+	# The whole history as a graph: one line per commit, then two (with the
+	# date), then three (with author and committer emails). --all includes
+	# every branch, tag and stash; a second ref argument doesn't narrow it
+	lg1 = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+	lg2 = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+	lg3 = log --graph --abbrev-commit --decorate --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset)%C(auto)%d%C(reset)%n          %C(white)%s%C(reset)%n          %C(dim white)- %an <%ae>%C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
 
 # Catppuccin Mocha for delta, from catppuccin/delta (MIT) at commit
 # 011516f5d14f66b771b3e716f29c77231e008c74, mocha section only. Its
