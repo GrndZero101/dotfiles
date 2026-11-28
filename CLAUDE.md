@@ -43,7 +43,7 @@ and fzf via antidote) and `yazi` (plugins and flavor via `ya pkg install`).
    `<tool>-<variant>`. Variants of one tool are alternatives; install
    exactly one. Stow enforces this because they own the same paths. It's
    also how machines get different subsets, and why repo-root files (README,
-   scripts) are never stowed.
+   scripts) and the `test/` and `docs/` directories are never stowed.
 2. **A package mirrors `$HOME` exactly.** `tmux-full/.config/tmux/tmux.conf`
    lands at `~/.config/tmux/tmux.conf`; `zsh-minimal/.zshrc` at `~/.zshrc`.
 3. **Prefer XDG** when the tool supports it on the oldest version we care

@@ -14,8 +14,8 @@ fail() {
 warn() { printf 'dotfiles: warn  %s\n' "$1" >&2; }
 have() { command -v "$1" >/dev/null 2>&1; }
 
-# Packages are the top-level directories, except the test image
-packages=$(for d in */; do [ "$d" = test/ ] || printf '%s ' "${d%/}"; done)
+# Packages are the top-level directories, except the test image and docs
+packages=$(for d in */; do case $d in test/ | docs/) ;; *) printf '%s ' "${d%/}" ;; esac done)
 
 # tmux: parse on a throwaway server that loads no config. These must be
 # separate tmux calls: chained with \; the exit status comes from the last

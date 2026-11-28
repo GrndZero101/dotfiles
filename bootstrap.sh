@@ -31,7 +31,7 @@ stowed() {
 # Each package's "# <package>: ..." header comment is its description
 if [ "${1:-}" = --pick ]; then
   [ $# -eq 1 ] || die "--pick chooses the packages; don't name any"
-  all=$(for d in */; do [ "$d" = test/ ] || printf '%s ' "${d%/}"; done)
+  all=$(for d in */; do case $d in test/ | docs/) ;; *) printf '%s ' "${d%/}" ;; esac done)
   { have fzf && [ -t 1 ]; } ||
     die "--pick needs fzf and a terminal. Name packages instead, ./bootstrap.sh <package>..., from: $all"
   # The preview is expanded later, by the sh that fzf runs it in
